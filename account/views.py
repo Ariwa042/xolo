@@ -95,10 +95,10 @@ def profile(request):
 @login_required
 def deposit(request):
     xp_packages = [
-        {'amount': 1, 'cost': 1000},
-        {'amount': 5, 'cost': 5000},
-        {'amount': 10, 'cost': 10000},
-        {'amount': 50, 'cost': 50000},
+        {'amount': 1, 'cost': 2000},
+        {'amount': 5, 'cost': 10000},
+        {'amount': 10, 'cost': 20000},
+        {'amount': 50, 'cost': 100000},
     ]
 
     payment_info = Payment_account.objects.first()  # Get the general payment info

@@ -158,3 +158,9 @@ def update_transaction_status(sender, instance, **kwargs):
             transaction.save()
     except Transactions.DoesNotExist:
         pass
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)

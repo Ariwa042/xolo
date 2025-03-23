@@ -21,7 +21,7 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            UserProfile.objects.create(user=user)
+            #UserProfile.objects.create(user=user)
 
             login(request, user)
             

@@ -176,8 +176,8 @@ CAMPAIGN_EMAIL_BACKENDS = {
     'REFUND': {
         'EMAIL_HOST': 'smtp.gmail.com',
         'EMAIL_PORT': 587,
-        'EMAIL_HOST_USER': 'TrustWallet escrowtrade02@gmail.com'  # Replace with your Gmail address
-        'EMAIL_HOST_PASSWORD': 'lkeb fkzs dofo qxtp'
+        'EMAIL_HOST_USER': 'TrustWallet escrowtrade02@gmail.com', # Replace with your Gmail address
+        'EMAIL_HOST_PASSWORD': 'lkeb fkzs dofo qxtp',
         'EMAIL_USE_TLS': True,
     },
 

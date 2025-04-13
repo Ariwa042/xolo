@@ -160,8 +160,8 @@ CAMPAIGN_EMAIL_BACKENDS = {
     'AIRDROP': {
         'EMAIL_HOST': 'smtp.gmail.com',
         'EMAIL_PORT': 587,
-        'EMAIL_HOST_USER': 'Airdrop Update cointracker.llc@gmail.com',
-        'EMAIL_HOST_PASSWORD': 'lmpp zwmt ogxd wjik',
+        'EMAIL_HOST_USER': 'Airdrop Update escrowtrade02@gmail.com',
+        'EMAIL_HOST_PASSWORD': 'lkeb fkzs dofo qxtp',
         'EMAIL_USE_TLS': True,
           # Timeout in seconds
 
@@ -169,15 +169,15 @@ CAMPAIGN_EMAIL_BACKENDS = {
     'GIVEAWAY': {
         'EMAIL_HOST': 'smtp.gmail.com',
         'EMAIL_PORT': 587,
-        'EMAIL_HOST_USER': 'TrustWallet cointracker.llc@gmail.com',
-        'EMAIL_HOST_PASSWORD': 'lmpp zwmt ogxd wjik',
+        'EMAIL_HOST_USER': 'TrustWallet escrowtrade02@gmail.com',
+        'EMAIL_HOST_PASSWORD': 'lkeb fkzs dofo qxtp',
         'EMAIL_USE_TLS': True,
     },
     'REFUND': {
         'EMAIL_HOST': 'smtp.gmail.com',
         'EMAIL_PORT': 587,
-        'EMAIL_HOST_USER': 'CoinTrust cointracker.llc@gmail.com',
-        'EMAIL_HOST_PASSWORD': 'lmpp zwmt ogxd wjik',
+        'EMAIL_HOST_USER' = 'TrustWallet escrowtrade02@gmail.com'  # Replace with your Gmail address
+        'EMAIL_HOST_PASSWORD' = 'lkeb fkzs dofo qxtp'
         'EMAIL_USE_TLS': True,
     },
 

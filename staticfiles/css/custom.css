@@ -1,0 +1,75 @@
+:root {
+  --primary-color: #00a8ff;
+  --secondary-color: #0056b3;
+  --background-color: #000000;
+  --text-color: #ffffff;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+header {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+h1, h2, h3 {
+  color: var(--primary-color);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+nav a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+nav a:hover {
+  color: var(--primary-color);
+}
+
+#banner {
+  background: linear-gradient(to right, var(--background-color), var(--secondary-color));
+}
+
+.banner-image {
+  height: 300px;
+  background-color: rgba(0, 168, 255, 0.1);
+  border-radius: 10px;
+}
+
+section {
+  border-bottom: 1px solid var(--primary-color);
+}
+
+#why-choose .col-md-3 {
+  background-color: rgba(0, 168, 255, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 10px;
+}
+
+footer {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+@media (max-width: 768px) {
+  header .row {
+      text-align: center;
+  }
+
+  header .text-end {
+      text-align: center !important;
+      margin-top: 15px;
+  }
+}

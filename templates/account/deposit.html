@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy XP</title>
+    <link rel="stylesheet" href="{% static 'css/deposit.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h1>Buy XP</h1>
+    <p>Select XP package to purchase</p>
+    <div class="xp-packages">
+        <!-- Display XP packages -->
+        {% for package in xp_packages %}
+            <div class="xp-package">
+                <h2>{{ package.amount }} XP for &#8358;{{ package.cost }}</h2>
+                <button class="btn-buy" onclick="selectPackage({{ package.amount }}, {{ package.cost }})">Buy Now</button>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Modal for payment instructions -->
+    <div id="payment-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Payment Information</h2>
+            <p>Amount to Pay: <strong>&#8358;<span id="modal-cost"></span></strong></p>
+            <p>Please transfer the exact amount to the account below:</p>
+            <ul>
+                <li>Bank Name: {{ payment_info.bank_name }}</li>
+                <li>Account Number: {{ payment_info.account_number }}</li>
+                <li>Account Holder: {{ payment_info.account_holder_name }}</li>
+            </ul>
+            <p>After payment confirmation, your XP will be credited to your account.</p>
+            <!-- Form to submit selected amount -->
+            <form method="POST" id="deposit-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="hidden" name="amount" id="selected-amount" value="">
+                <button type="submit" class="btn-submit">Confirm Payment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Deposit message overlay -->
+    <div id="deposit-message" class="deposit-message">
+        <div class="deposit-message-content">
+            <h3>Deposit in Progress</h3>
+            <p>XP wil be credited when payment has been confirmed. Please wait...</p>
+            <div class="loader"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function selectPackage(amount, cost) {
+        document.getElementById('selected-amount').value = amount;
+        document.getElementById('modal-cost').innerText = cost;
+        document.getElementById('payment-modal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+
+    window.onclick = function(event) {
+        let modal = document.getElementById('payment-modal');
+        if (event.target == modal || event.target.className == 'close') {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    document.getElementById('deposit-form').onsubmit = function(e) {
+        e.preventDefault();
+
+        // Show the deposit message
+        document.getElementById('deposit-message').style.display = 'flex';
+
+        // Submit the form
+        this.submit();
+    };
+</script>
+</body>
+</html>

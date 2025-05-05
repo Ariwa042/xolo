@@ -1,0 +1,229 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-variant: #3700b3;
+            --secondary: #3496db;
+            --bg: #121212;
+            --surface: #1e1e1e;
+            --error: #cf6679;
+            --text-primary: #fff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 700;
+            letter-spacing: 0.1rem;
+        }
+
+        .transaction-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .transaction-item {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 0.5s ease backwards;
+        }
+
+        .transaction-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .transaction-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--primary);
+            color: var(--text-primary);
+            flex-shrink: 0;
+        }
+
+        .transaction-details {
+            flex: 1;
+        }
+
+        .transaction-type {
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .transaction-date {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .transaction-amount {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--secondary);
+        }
+
+        .transaction-status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-completed { background: rgba(46, 125, 50, 0.2); color: #81c784; }
+        .status-pending { background: rgba(245, 124, 0, 0.2); color: #ffb74d; }
+        .status-failed { background: rgba(198, 40, 40, 0.2); color: #e57373; }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 2rem;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            gap: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        .no-transactions {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+            background: var(--surface);
+            border-radius: 8px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .transaction-item:nth-child(1) { animation-delay: 0.1s; }
+        .transaction-item:nth-child(2) { animation-delay: 0.2s; }
+        .transaction-item:nth-child(3) { animation-delay: 0.3s; }
+        .transaction-item:nth-child(4) { animation-delay: 0.4s; }
+        .transaction-item:nth-child(5) { animation-delay: 0.5s; }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+
+            .transaction-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .transaction-amount,
+            .transaction-status {
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+        <div class="container">
+            <a href="{% url 'account:profile' %}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Profile
+            </a><h2>Transaction History</h2>
+
+            <!-- Deposits Section -->
+            <h3>Deposits</h3>
+            {% if deposits %}
+                <div class="transaction-list">
+                    {% for deposit in deposits %}
+                        <div class="transaction-item">
+                            <div class="transaction-icon">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-type">Deposit</div>
+                                <div class="transaction-date">{{ deposit.created_at|date:"F j, Y H:i" }}</div>
+                            </div>
+                            <div class="transaction-amount">{{ deposit.amount }} XP</div>
+                            <div class="transaction-status status-{{ deposit.status|lower }}">{{ deposit.status }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-transactions">
+                    <i class="fas fa-inbox fa-3x" style="margin-bottom: 1rem;"></i>
+                    <p>No deposit transactions available at the moment.</p>
+                </div>
+            {% endif %}
+
+            <!-- Spends Section 
+            <h3>Spends</h3>
+            {% if spends %}
+                <div class="transaction-list">
+                    {% for spend in spends %}
+                        <div class="transaction-item">
+                            <div class="transaction-icon">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-type">Spend</div>
+                                <div class="transaction-date">{{ spend.created_at|date:"F j, Y H:i" }}</div>
+                            </div>
+                            <div class="transaction-amount">{{ spend.amount }} XP</div>
+                            <div class="transaction-status status-{{ spend.status|lower }}">{{ spend.status }}</div>
+                        </div>
+                    {% endfor %}
+                </div> -->
+            {% else %}
+                <div class="no-transactions">
+                    <i class="fas fa-inbox fa-3x" style="margin-bottom: 1rem;"></i>
+                    <p>No spend transactions available at the moment.</p>
+                </div>
+            {% endif %}
+
+            <a href="{% url 'account:profile' %}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Profile
+            </a>
+        </div>
+    </body>
+    </html>

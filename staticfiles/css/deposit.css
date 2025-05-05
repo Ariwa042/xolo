@@ -1,0 +1,372 @@
+/* Custom properties for easy theming */
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #4db6ac;
+    --background-color: #1a1a1a;
+    --text-color: white;
+    --card-background: #2c2c2c;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --transition-speed: 0.3s;
+}
+
+/* Base styles and resets */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  transition: background-color var(--transition-speed) ease;
+}
+
+.container {
+  max-width: 1200px;
+  width: 100%;
+  padding: 40px;
+  background: var(--card-background);
+  border-radius: 20px;
+  box-shadow: 0 15px 35px var(--shadow-color);
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+h1 {
+  text-align: center;
+  color: var(--text-color);
+  margin-bottom: 40px;
+  font-size: 2.8rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  position: relative;
+}
+
+h1::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: var(--secondary-color);
+  margin: 15px auto 0;
+  border-radius: 2px;
+}
+
+.xp-packages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.xp-package {
+  background: var(--card-background);
+  border-radius: 15px;
+  padding: 30px;
+  text-align: center;
+  transition: all var(--transition-speed) ease;
+  box-shadow: 0 8px 20px var(--shadow-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.xp-package::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, var(--secondary-color) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity var(--transition-speed) ease;
+}
+
+.xp-package:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 15px 30px var(--shadow-color);
+}
+
+.xp-package:hover::before {
+  opacity: 0.1;
+}
+
+.xp-package h2 {
+  font-size: 1.4rem;
+  color: var(--text-color);
+  margin-bottom: 25px;
+  position: relative;
+  z-index: 1;
+}
+
+.btn-buy {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-buy::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.6s ease;
+}
+
+.btn-buy:hover {
+  background-color: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(80, 227, 194, 0.4);
+}
+
+.btn-buy:hover::after {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Modal styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  background-color: var(--card-background);
+  margin: 5% auto;
+  padding: 40px;
+  border-radius: 20px;
+  max-width: 550px;
+  width: 90%;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-70px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.close {
+  color: var(--text-color);
+  float: right;
+  font-size: 32px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color var(--transition-speed) ease;
+}
+
+.close:hover {
+  color: var(--primary-color);
+}
+
+.modal h2 {
+  color: var(--primary-color);
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+}
+
+.modal p, .modal ul {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    margin-top: 30px;
+    text-align: start;
+    
+}
+
+.modal ul {
+  list-style-type: none;
+}
+
+.modal li {
+  margin-bottom: 12px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.modal li::before {
+  content: '•';
+  color: var(--secondary-color);
+  position: absolute;
+  left: 0;
+}
+
+.btn-submit {
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  padding: 14px 30px;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+  display: block;
+  width: 100%;
+  margin-top: 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-submit::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.6s ease;
+}
+
+.btn-submit:hover {
+  background-color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+}
+
+.btn-submit:hover::after {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 30px;
+  }
+
+  h1 {
+    font-size: 2.4rem;
+  }
+
+  .xp-package {
+    padding: 25px;
+  }
+
+  .modal-content {
+    margin: 10% auto;
+    padding: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 15px;
+  }
+
+  .container {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .xp-package h2 {
+    font-size: 1.2rem;
+  }
+
+  .btn-buy, .btn-submit {
+    font-size: 1rem;
+    padding: 10px 20px;
+  }
+
+  .modal h2 {
+    font-size: 1.6rem;
+  }
+
+  .modal p, .modal ul {
+    font-size: 1rem;
+  }
+}
+
+p {
+    text-align: center;
+    font-weight: 500;
+}
+/* Dark mode */
+.deposit-message {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.deposit-message-content {
+    background-color: var(--card-background);
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.deposit-message h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.loader {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid var(--primary-color);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto 0;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

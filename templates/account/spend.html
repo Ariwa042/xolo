@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spend XP Balance</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        /* Custom styles */
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; }
+        .container { width: 400px; margin: 50px auto; padding: 20px; background: white; border-radius: 8px; }
+        h2 { text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 10px; }
+        button { width: 100%; padding: 10px; background: #dc3545; color: white; border: none; }
+        button:hover { background: #c82333; }
+        .error { color: red; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Spend XP Balance</h2>
+    <form method="post" action="{% url 'account:spend' %}">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="form-group">
+            <label for="amount">Amount:</label>
+            {{ form.amount }}
+            {% for error in form.amount.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <!-- Add other form fields as required -->
+        <button type="submit">Submit Payment</button>
+    </form>
+</div>
+
+</body>
+</html>

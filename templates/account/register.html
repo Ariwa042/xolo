@@ -1,0 +1,85 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Emirex Tools</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+</head>
+<body>
+    <header>
+        <a href="#" class="logo">
+            <i class="fas fa-cube"></i>
+            <span>Emirex Tools</span>
+        </a>
+    </header>
+
+    <div class="register-container">
+        <h2>Register your account</h2>
+        <form method="post" action="{% url 'account:register' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_full_name">Full Name:</label>
+                {{ form.full_name }}
+                <div class="error-message {% if form.full_name.errors %}visible{% endif %}">
+                    {% for error in form.full_name.errors %}
+                        <p class="error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_username">Username:</label>
+                {{ form.username }}
+                <div class="error-message {% if form.username.errors %}visible{% endif %}">
+                    {% for error in form.username.errors %}
+                        <p class="error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_email">Email:</label>
+                {{ form.email }}
+                <div class="error-message {% if form.email.errors %}visible{% endif %}">
+                    {% for error in form.email.errors %}
+                        <p class="error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_password1">Password:</label>
+                {{ form.password1 }}
+                <div class="error-message {% if form.password1.errors %}visible{% endif %}">
+                    {% for error in form.password1.errors %}
+                        <p class="error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_password2">Confirm Password:</label>
+                {{ form.password2 }}
+                <div class="error-message {% if form.password2.errors %}visible{% endif %}">
+                    {% for error in form.password2.errors %}
+                        <p class="error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+        <p class="mt-3">Already registered? <a href="{% url 'account:login' %}">Login</a></p>
+    </div>
+
+    <footer>
+        <p>Copyright 2024 Emirex Tools. All rights reserved.</p>
+    </footer>
+</body>
+</html>

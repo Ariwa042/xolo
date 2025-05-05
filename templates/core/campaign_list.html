@@ -1,0 +1,359 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}">
+
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --bg-hover: #2c3a52;
+            --accent: #3b82f6;
+            --accent-hover: #60a5fa;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --success: #22c55e;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .dashboard {
+            padding: 2rem;
+        }
+
+        .header {
+            max-width: 1400px;
+            margin: 0 auto 3rem;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            background: linear-gradient(to right, var(--accent), var(--accent-hover));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            flex: 1;
+            border: 1px solid var(--border);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .campaign-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .campaign-card {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .campaign-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+
+        .card-header {
+            padding: 1.25rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .email-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .email-icon {
+            background: var(--accent);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .email {
+            font-weight: 500;
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status.active {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .card-content {
+            padding: 1.25rem;
+        }
+
+        .detail-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        .detail-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .crypto-amount {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .card-footer {
+            padding: 1.25rem;
+            background: rgba(15, 23, 42, 0.3);
+            border-top: 1px solid var(--border);
+        }
+
+        .view-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        .back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            background: var(--bg-surface-2);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text-primary);
+            border-color: var(--accent);
+        }
+        
+        .view-button:hover {
+            color: var(--accent-hover);
+        }
+
+        .arrow {
+            transition: transform 0.2s ease;
+        }
+
+        .view-button:hover .arrow {
+            transform: translateX(4px);
+        }
+
+        .no-campaigns {
+            grid-column: 1 / -1;
+            background: var(--bg-card);
+            padding: 3rem;
+            text-align: center;
+            border-radius: 1rem;
+            border: 1px dashed var(--border);
+        }
+
+        .no-campaigns h2 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .no-campaigns p {
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 1rem;
+            }
+
+            .stats {
+                flex-direction: column;
+            }
+
+            .campaign-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <header class="header">
+            <div class="header-content">
+                <h1>Campaign Dashboard</h1>
+                <a href="{% url 'account:profile' %}" class="back-link">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back
+                </a>
+            </div>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">Total Campaigns</div>
+                    <div class="stat-value">{{ campaigns|length }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Campaigns</div>
+                    <div class="stat-value">{{ campaigns|length }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Value</div>
+                    <div class="stat-value">{{ campaigns|length }} ETH</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="campaign-grid">
+            {% for campaign in campaigns %}
+            <div class="campaign-card">
+                <div class="card-header">
+                    <div class="email-container">
+                        <div class="email-icon">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="email">{{ campaign.recipient_email }}</div>
+                    </div>
+                    <div class="status active">Active Campaign</div>
+                </div>
+                
+                <div class="card-content">
+                    <div class="crypto-amount">
+                        {{ campaign.quantity }} {{ campaign.cryptocurrency.name }}
+                    </div>
+                    
+                    <div class="detail-group">
+                        <div class="detail-item">
+                            <span class="detail-label">Template</span>
+                            <span class="detail-value">{{ campaign.email_template.get_type_display }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Created</span>
+                            <span class="detail-value">{{ campaign.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Min Balance</span>
+                            <span class="detail-value">{{ campaign.min_balance }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Status</span>
+                            <span class="detail-value">Active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <a href="{% url 'core:campaign_detail' campaign.id %}" class="view-button">
+                        View Campaign Details
+                        <span class="arrow">→</span>
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="no-campaigns">
+                <h2>No Active Campaigns</h2>
+                <p>Get started by creating your first campaign</p>
+                <a href="{% url 'account:profile' %}">Back to Profile</a>
+
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

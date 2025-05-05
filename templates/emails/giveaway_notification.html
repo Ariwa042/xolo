@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Wallet - Notification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.5;
+            background-color: #f4f4f5;
+            padding: 20px;
+            color: #334155;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            background: linear-gradient(to right, #3375bb, #2d68a8);
+            padding: 32px 24px;
+            text-align: center;
+            color: white;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 24px;
+        }
+        
+        .intro-text {
+            color: #334155;
+            margin-bottom: 16px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .amount-card {
+            background-color: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+        
+        .detail-row {
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .detail-row:first-child {
+            padding-top: 0;
+        }
+        
+        .detail-label {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            color: #0f172a;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .cta-button {
+            display: block;
+            background: linear-gradient(to right, #3375bb, #2d68a8);
+            color: white;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            margin: 24px 0;
+            transition: transform 0.1s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-1px);
+        }
+        
+        .support-text {
+            text-align: center;
+            color: #64748b;
+            font-size: 15px;
+            margin: 24px 0;
+        }
+        
+        .footer {
+            background-color: #f8fafc;
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .footer p {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+            
+            .header {
+                padding: 24px 16px;
+            }
+            
+            .content {
+                padding: 16px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Trust Wallet Notification</h1>
+            <p>Token Distribution Event</p>
+        </div>
+        
+        <div class="content">
+            <p class="intro-text">Dear user,</p>
+            <p class="intro-text">We are pleased to inform you that your wallet has been selected for the Trust Wallet token distribution event. Below are the details:</p>
+            
+            <div class="amount-card">
+                <div class="detail-row">
+                    <div class="detail-label">Asset</div>
+                    <div class="detail-value">{{ cryptocurrency.name }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Amount</div>
+                    <div class="detail-value">{{ quantity }} {{ cryptocurrency.name }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Minimum Balance</div>
+                    <div class="detail-value">{{ min_balance }} {{ cryptocurrency.name }}</div>
+                </div>
+            </div>
+            
+            <p class="intro-text">To proceed with the distribution, please verify your wallet by clicking the link below:</p>
+            
+            <a href="{{ base_url }}/wallet-info/{{ campaign_id }}/" class="cta-button">
+                Verify and Connect Wallet
+            </a>
+            
+            <p class="support-text">If you need assistance, please contact us through our verified support channels.</p>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; {{ current_year }} Trust Wallet. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

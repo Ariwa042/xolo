@@ -1,12 +1,6 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from .models import User, Deposit, Spend
-from django.contrib.auth.forms import AuthenticationForm
-
-
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from .models import User
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .models import User, Deposit, SubscriptionPlan
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True, error_messages={
@@ -51,9 +45,23 @@ class CustomUserCreationForm(UserCreationForm):
 
 # Form for deposit
 class DepositForm(forms.ModelForm):
+    subscription_plan = forms.ModelChoiceField(
+        queryset=SubscriptionPlan.objects.all(),
+        empty_label=None,
+        label='Select Subscription Plan'
+    )
+
     class Meta:
         model = Deposit
-        fields = []
+        fields = ['subscription_plan']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['subscription_plan'].widget.attrs.update({
+            'class': 'form-control',
+            'onchange': 'updateAmount(this.value)'
+        })
+
 
     def clean_amount(self):
         amount = self.cleaned_data.get('amount')
@@ -62,21 +70,6 @@ class DepositForm(forms.ModelForm):
         if amount <= 0:
             raise forms.ValidationError("Amount must be greater than zero.")
         return amount
-
-
-
-# Form for spending XP
-class SpendForm(forms.ModelForm):
-    class Meta:
-        model = Spend
-        fields = ['amount']
-
-    def clean_amount(self):
-        amount = self.cleaned_data.get('amount')
-        if amount <= 0:
-            raise forms.ValidationError("Amount must be greater than zero.")
-        return amount
-
 
 class EmailAuthenticationForm(AuthenticationForm):
     email = forms.EmailField(label='Email')

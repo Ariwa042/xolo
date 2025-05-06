@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import CustomUserCreationForm, DepositForm, SpendForm, EmailAuthenticationForm
-from .models import UserProfile, Deposit, Spend, Transactions, Payment_account
+from .forms import CustomUserCreationForm, DepositForm, EmailAuthenticationForm
+from .models import UserProfile, Deposit, Transactions, Payment_account, SubscriptionPlan, Subscription
 from django.db.models import Sum
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -11,6 +11,7 @@ from core.models import Campaign
 import logging
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -71,127 +72,120 @@ def user_logout(request):
     return redirect('account:login')
 
 
-# User profile view
 @login_required
 def profile(request):
-    user_profile = UserProfile.objects.get(user=request.user)
-    total_deposits = Deposit.objects.filter(user=request.user, status='COMPLETED').aggregate(Sum('amount'))['amount__sum'] or 0
-    total_spent = Spend.objects.filter(user=request.user, status='COMPLETED').aggregate(Sum('amount'))['amount__sum'] or 0
-    transactions = Transactions.objects.filter(user=request.user)
+    user_profile = UserProfile.get_profile(request.user)
+    
+    # Get completed deposits
+    deposits = Deposit.objects.filter(
+        user=request.user,
+        status='COMPLETED'
+    )
+    total_deposits = sum(
+        deposit.subscription_plan.price 
+        for deposit in deposits 
+        if deposit.subscription_plan is not None
+    )  # Re-enable total_deposits calculation
+
+    # Get transactions
+    transactions = Transactions.objects.filter(
+        user=request.user
+    ).select_related('subscription__plan')
+
     campaigns_count = Campaign.objects.filter(user=request.user).count()
 
     context = {
         'user_profile': user_profile,
         'total_deposits': total_deposits,
-        'total_spent': total_spent,
+        'total_transactions': len(deposits),
         'transactions': transactions,
         'campaigns_count': campaigns_count,
     }
     return render(request, 'account/profile.html', context)
 
 
-# Deposit view
-
+# Subscription plans view
 @login_required
-def deposit(request):
-    xp_packages = [
-        {'amount': 1, 'cost': 1000},
-        {'amount': 5, 'cost': 5000},
-        {'amount': 10, 'cost': 10000},
-        {'amount': 50, 'cost': 50000},
-    ]
+def subscription_plans(request):
+    plans = SubscriptionPlan.objects.all()
+    user_subscriptions = Subscription.objects.filter(
+        user=request.user,
+        is_active=True
+    )
+    return render(request, 'account/plans.html', {
+        'plans': plans,
+        'user_subscriptions': user_subscriptions
+    })
 
-    payment_info = Payment_account.objects.first()  # Get the general payment info
+# Subscribe to plan view
+@login_required
+def subscribe_to_plan(request, plan_id):
+    plan = get_object_or_404(SubscriptionPlan, id=plan_id)
+    # Remove deposit creation from here
+    return redirect('account:deposit')
+
+# Deposit view
+@login_required 
+def deposit(request):
+    payment_info = Payment_account.objects.first()
 
     if request.method == 'POST':
-        selected_amount = request.POST.get('amount')
-
-        if selected_amount:
-            form = DepositForm(request.POST)
-            if form.is_valid():
-                deposit = form.save(commit=False)
-                deposit.user = request.user
-                deposit.amount = selected_amount  # Set the selected amount
-                deposit.status = 'PENDING'
-                deposit.save()
-
-                # Send email to all superusers or staff
-                User = get_user_model()
-                superusers_or_staff = User.objects.filter(is_superuser=True) | User.objects.filter(is_staff=True)
-                email_list = [user.email for user in superusers_or_staff if user.email]
-
-                if email_list:
-                    send_mail(
-                        subject="New Deposit Pending Approval",
-                        message=f"A user has made a deposit of {deposit.amount} XP. Please review and approve it.",
-                        from_email= "Airstrike <cryptotracker.llc@gmail.com>",
-                        recipient_list=email_list,
-                        fail_silently=False,
-                    )
-
-                messages.success(request, 'Deposit created, pending approval.')
-                return redirect('account:profile')
+        form = DepositForm(request.POST, request.FILES)
+        if form.is_valid():
+            deposit = form.save(commit=False)
+            deposit.user = request.user
+            deposit.payment_account = payment_info
+            deposit.status = 'PENDING'
+            
+            # Handle receipt file
+            #if 'receipt' in request.FILES:
+             #   deposit.receipt = request.FILES['receipt']
+            
+            deposit.save()
+            
+            # Send admin notification
+            notify_admins_of_pending_payment(deposit)
+            messages.success(request, 'Payment submitted and under review.')
+            return redirect('account:profile')
         else:
-            messages.error(request, 'No amount was selected.')
-            return redirect('account:deposit')
+            messages.error(request, 'Please correct the errors below.')
     else:
         form = DepositForm()
 
-    context = {
+    return render(request, 'account/deposit.html', {
         'form': form,
-        'xp_packages': xp_packages,
         'payment_info': payment_info,
-    }
-    return render(request, 'account/deposit.html', context)
+    })
 
-
-
-# Spend view
-@login_required
-def spend(request):
-    if request.method == 'POST':
-        form = SpendForm(request.POST)
-        if form.is_valid():
-            spend = form.save(commit=False)
-            user_profile = UserProfile.objects.get(user=request.user)
-
-            if user_profile.xp_balance >= float(spend.amount):
-                spend.user = request.user
-                spend.status = 'PENDING'
-                spend.save()
-                Transactions.objects.create(
-                    user=request.user,
-                    type='SPENT',
-                    amount=spend.amount,
-                    status='PENDING'
-                )
-                messages.success(request, 'Payment initiated, pending approval.')
-            else:
-                messages.error(request, 'Insufficient XP balance.')
-
-            return redirect('account:profile')
-    else:
-        form = SpendForm()
-
-    return render(request, 'account/spend.html', {'form': form})
-
+# Subscription list view
+#@login_required
+#def subscription_list(request):
+#    subscriptions = Subscription.objects.filter(user=request.user).order_by('-start_date')
+#    return render(request, 'account/subscriptions.html', {
+#        'subscriptions': subscriptions
+#    })
 
 # Transaction history view
 @login_required
 def transaction_history(request):
+    # Get all deposits
     deposits = Deposit.objects.filter(
-        user=request.user).order_by('-created_at')
-    spends = Spend.objects.filter(
-       user=request.user).order_by('-created_at')
+        user=request.user
+    ).select_related('subscription_plan').order_by('-created_at')
+
+    # Calculate total amount from completed deposits
+    total_amount = sum(
+    deposit.subscription_plan.price 
+    for deposit in deposits 
+    if deposit.status == 'COMPLETED' and deposit.subscription_plan is not None
+    )
+
     return render(request, 'account/transactions.html', {
         'deposits': deposits,
-        'spends': spends,
+        'total_amount': total_amount
     })
-#    context = {
-#        'transactions': transactions
-#    }
-#    return render(request, 'account/transactions.html', context)
 
+# Change password view
 @login_required
 def change_password(request):
     if request.method == 'POST':
@@ -208,3 +202,25 @@ def change_password(request):
         form = PasswordChangeForm(request.user)
     
     return render(request, 'account/change_password.html', {'form': form})
+
+def notify_admins_of_pending_payment(deposit):
+    User = get_user_model()
+    admins = User.objects.filter(is_superuser=True)
+    
+    subject = "New Subscription Payment Pending"
+    message = f"""
+    A new payment is pending approval:
+    User: {deposit.user.username}
+    Plan: {deposit.subscription_plan}
+    Amount: ₦{deposit.amount}
+    """
+    
+    admin_emails = [admin.email for admin in admins if admin.email]
+    if admin_emails:
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=admin_emails,
+            fail_silently=True
+        )

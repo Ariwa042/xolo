@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Subscription Plans - Emirex{% endblock %}
+
+{% block extra_css %}
+<style>
+    .subscription-plans {
+        padding: 2rem;
+        background: #2c2c2c;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        margin: 20px;
+    }
+
+    .plans-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .plan-card {
+        background: #2c2c2c;
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .price {
+        margin: 1rem 0;
+    }
+
+    .amount {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2196f3;
+    }
+
+    .period {
+        color: white;
+    }
+
+    .features {
+        list-style: none;
+        padding: 0;
+        margin: 1.5rem 0;
+    }
+
+    .features li {
+        padding: 0.5rem 0;
+        color: #34495e;
+    }
+
+    .btn-primary {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .current-subscriptions {
+        margin-top: 3rem;
+        padding: 2rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .subscription-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .subscription-list li {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    @media (max-width: 768px) {
+        .subscription-plans {
+            padding: 1rem;
+            margin: 10px;
+        }
+
+        .plans-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="subscription-plans">
+    <h1>Available Plans</h1>
+    <div class="plans-grid">
+        {% for plan in plans %}
+        <div class="plan-card">
+            <h2>{{ plan.id }} Plan</h2>
+            <div class="price">
+                <span class="amount">₦{{ plan.price }}</span>
+                <span class="period">/month</span>
+            </div>
+            <ul class="features">
+                <li>Up to {{ plan.max_emails_per_month }} emails per month</li>
+                <li>{{ plan.duration_days }} days access</li>
+            </ul>
+            <form method="post" action="{% url 'account:subscribe' plan.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Subscribe Now</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if user_subscriptions %}
+    <div class="current-subscriptions">
+        <h2>Your Active Subscriptions</h2>
+        <ul class="subscription-list">
+            {% for sub in user_subscriptions %}
+            <li>
+                <span class="plan-name">{{ sub.plan }}</span>
+                <span class="expiry">Expires: {{ sub.end_date|date:"M d, Y" }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

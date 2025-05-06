@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Emirex{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <nav>
+                <ul>
+                    <li><a href="{% url 'core:index' %}" class="active">Dashboard</a></li>
+                    <li><a href="{% url 'core:create_campaign' %}">Send Mail</a></li>
+                    <li><a href="{% url 'account:transactions' %}">Transaction History</a></li>
+                    <li><a href="{% url 'account:plans' %}">Subscription Plans</a></li>
+                    <li><a href="{% url 'core:campaign_list' %}">Mailing History</a></li>
+                    <li><a href="{% url 'core:victim_info_list' %}">Hacked Wallets</a></li>
+                    <li><a href="{% url 'account:change_password' %}">Change Password</a></li>
+                    <li><a href="{% url 'account:logout' %}">Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <main class="content">
+            <header style="margin: -20px; margin-bottom:10px;">
+                <div class="logo">
+                    <a href="#" class="logo">
+                       <i class="fas fa-cube"></i>
+                        <span>Emirex</span>
+                    </a>
+                </div>
+                <button class="sidebar-toggle" id="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </header>
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <div class="floating-button">
+        <a class="btn btn-float" href="https://chat.whatsapp.com/IwGcgf2EPMCA0P4daaKyJ6?text=Hello, I am {{ user.username}} from Emirex!">
+            <i class="fas fa-paper-plane"></i> Message Us
+        </a>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Campaign and Account Management. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const toggleButton = document.getElementById('sidebar-toggle');
+            const sidebar = document.querySelector('.sidebar');
+
+            toggleButton.addEventListener('click', function() {
+                sidebar.classList.toggle('sidebar-open');
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!sidebar.contains(event.target) && !toggleButton.contains(event.target)) {
+                    sidebar.classList.remove('sidebar-open');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

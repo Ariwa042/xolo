@@ -1,0 +1,266 @@
+/* Root Variables */
+:root {
+  --primary-color: #3b82f6;
+  --secondary-color: #3b82f6;
+  --background-color: #242424;
+  --text-color: #ffffff;
+  --accent-color: #38bdf8;
+  --error-color: #ff4d4d;
+  --input-background: #2a2f3a;
+  --input-text-color: #e0e0e0;
+  --error-background: rgba(255, 77, 77, 0.2);
+  --font-family: 'Poppins', sans-serif;
+}
+
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Container */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header */
+header {
+    background: rgb(15 23 42 / 95%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 20px;
+    margin-bottom: 30px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.logo i {
+  color: var(--primary);
+}
+
+h1, h2, h3 {
+  color: var(--primary-color);
+}
+
+/* Navigation */
+nav a {
+  color: var(--text-color);
+  text-decoration: none;
+  margin-left: 20px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+nav a:hover {
+  color: var(--accent-color);
+}
+
+/* Button Styling */
+.btn {
+  display: inline-block;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+  background-color: var(--secondary-color);
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border: none;
+  padding: 12px 20px;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  width: 100%;
+  font-size: 1.1em;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary-color);
+  transform: translateY(-2px);
+}
+
+/* Main Section */
+main {
+  padding-top: 120px;
+}
+
+section {
+  padding: 60px 0;
+  border-bottom: 1px solid var(--primary-color);
+}
+
+/* Register Container */
+.register-container {
+  width: 100%;
+  max-width: 700px;
+  margin: 100px auto;
+  padding: 30px;
+  background-color: var(--background-color);
+}
+
+p.mt-3 {
+    margin-top: 20px;
+}
+
+.register-container h2 {
+  color: var(--text-color);
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 1.5rem;
+  font-family: var(--font-family);
+}
+
+/* Form Styling */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--text-color);
+  font-size: 1em;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: #475a6f;
+  border-radius: 0.25rem;
+  background-color: var(--input-background);
+  color: var(--input-text-color);
+  font-size: 1em;
+}
+
+.form-group input::placeholder {
+  color: #cccccc;
+}
+
+a {
+  color: #38bdf6;
+  text-decoration: none;
+}
+
+.form-group input:focus {
+  border-color: var(--accent-color);
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 168, 255, 0.5);
+  transition: all 0.2s ease;
+}
+
+/* Error Handling */
+.error-message {
+  color: var(--error-color);
+  font-size: 0.9em;
+  margin-top: 5px;
+  background-color: var(--error-background);
+  padding: 10px;
+  border-radius: 4px;
+  opacity: 0; /* Start hidden */
+  transition: opacity 0.3s ease; /* Smooth transition */
+  visibility: hidden; /* Prevent layout shift */
+}
+
+/* Class to show the error message */
+.error-message.visible {
+  opacity: 1; /* Fully visible */
+  visibility: visible; /* Ensure it can be seen */
+  display: block; /* Set display to block */
+}
+
+
+/* Password Toggle */
+.password-toggle {
+  position: relative;
+}
+
+.password-toggle input {
+  padding-right: 40px;
+}
+
+.password-toggle .toggle-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+/* Footer */
+footer {
+  background-color: rgba(0, 0, 0, 0.8);
+  text-align: center;
+  padding: 20px;
+  margin-top: auto;
+  color: var(--text-color);
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  header .container {
+    flex-direction: column;
+  }
+
+  nav {
+    margin-top: 20px;
+  }
+
+  nav a {
+    display: block;
+    margin: 10px 0;
+  }
+
+  .register-container {
+    width: 100%;
+  }
+
+  .flex-item {
+    flex-basis: 100%;
+  }
+}

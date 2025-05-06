@@ -11,6 +11,9 @@ from account.models import UserProfile
 from django.utils.html import strip_tags
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import get_connection
+from .decorators import subscription_required
+from django.utils import timezone
+from account.models import Subscription, SubscriptionPlan
 
 
 
@@ -28,51 +31,65 @@ def index(request):
     return render(request, 'core/index.html')
 
 @login_required
+@subscription_required()
 def create_campaign(request):
     if request.method == 'POST':
         form = CampaignForm(request.POST)
         if form.is_valid():
             campaign = form.save(commit=False)
             campaign.user = request.user
-            xp_cost = campaign.email_template.xp_cost
-
-
-            # Check if user has enough XP to create the campaign
-            if request.user.userprofile.xp_balance >= xp_cost:
+            
+            # Check user's subscription
+            subscription = Subscription.objects.filter(
+                user=request.user,
+                is_active=True,
+                end_date__gt=timezone.now()
+            ).first()
+            
+            if subscription and not subscription.has_reached_limit():
+                campaign.save()
+                
                 try:
-                    # Send the email with dynamic SMTP before saving the campaign
                     send_campaign_email(campaign, request)
-
-                    # Deduct XP cost only if the email was successfully sent
-                    request.user.userprofile.xp_balance -= xp_cost
-                    request.user.userprofile.save()
-
-                    # Save the campaign after successful email send
-                    campaign.save()
                     messages.success(request, 'Campaign created and email sent successfully!')
-
                 except Exception as e:
-                    logger.error(f"Failed to send email: {e}", exc_info=True)
+                    logger.error(f"Failed to send email: {str(e)}")
+                    campaign.delete()  # Rollback campaign creation if email fails
                     messages.error(request, 'Email sending failed. Campaign was not created.')
-
+                    
                 return redirect('core:campaign_list')
             else:
-                messages.error(request, 'Insufficient XP balance to create this campaign.')
+                messages.error(request, 'Monthly email limit reached for this template.')
+                return redirect('core:campaign_list')
     else:
         form = CampaignForm()
-        
-    user_profile = UserProfile.objects.get(user=request.user)
+
     email_templates = EmailTemplate.objects.all()
-    email_templates_data = list(email_templates.values('id', 'type', 'xp_cost'))
-
-    for template in email_templates_data:
-        template['xp_cost'] = float(template['xp_cost'])  # Convert xp_cost to float
-
+    email_templates_data = []
     
-    return render(request, 'core/create_campaign.html', {'form': form, 'email_templates': email_templates_data, 'user_profile': user_profile})
+    # Get active subscription info
+    subscription = Subscription.objects.filter(
+        user=request.user,
+        is_active=True,
+        end_date__gt=timezone.now()
+    ).first()
+
+    for template in email_templates:
+        if subscription:
+            email_templates_data.append({
+                'id': template.id,
+                'type': template.type,
+                'max_emails': subscription.plan.max_emails_per_month
+            })
+
+    return render(request, 'core/create_campaign.html', {
+        'form': form,
+        'email_templates': email_templates_data
+    })
 
 
 @login_required
+@subscription_required()
 def create_multi_campaign(request):
     if request.method == 'POST':
         form = MultiCampaignForm(request.POST)
@@ -81,12 +98,30 @@ def create_multi_campaign(request):
             email_2 = form.cleaned_data.get('email_2')
             email_3 = form.cleaned_data.get('email_3')
 
-            recipient_emails = [email for email in [email_1, email_2, email_3] if email]  # Collect non-empty emails
+            recipient_emails = [email for email in [email_1, email_2, email_3] if email]
             campaign_template = form.cleaned_data['email_template']
             cryptocurrency = form.cleaned_data['cryptocurrency']
             quantity = form.cleaned_data['quantity']
             min_balance = form.cleaned_data['min_balance']
 
+            # Get active subscription - removed template filter
+            subscription = Subscription.objects.filter(
+                user=request.user,
+                is_active=True,
+                end_date__gt=timezone.now()
+            ).first()
+
+            if not subscription:
+                messages.error(request, 'Active subscription required')
+                return redirect('account:plans')
+
+            # Check if adding these emails would exceed monthly limit
+            current_usage = subscription.get_monthly_usage()
+            if current_usage + len(recipient_emails) > subscription.plan.max_emails_per_month:
+                messages.error(request, f'Creating these campaigns would exceed your monthly limit of {subscription.plan.max_emails_per_month} emails')
+                return redirect('core:campaign_list')
+
+            # Create campaigns for each email
             for email in recipient_emails:
                 campaign = Campaign(
                     user=request.user,
@@ -96,18 +131,14 @@ def create_multi_campaign(request):
                     quantity=quantity,
                     min_balance=min_balance
                 )
-
-                # Deduct XP cost
-                xp_cost = campaign_template.xp_cost
-                if request.user.userprofile.xp_balance >= xp_cost:
-                    request.user.userprofile.xp_balance -= xp_cost
-                    request.user.userprofile.save()
+                
+                try:
                     campaign.save()
-
-                    # Send the email based on template
                     send_campaign_email(campaign, request)
-                else:
-                    messages.error(request, f"Insufficient XP for {email}. Campaign could not be created.")
+                except Exception as e:
+                    logger.error(f"Failed to create campaign for {email}: {str(e)}")
+                    campaign.delete()  # Rollback if email sending fails
+                    messages.error(request, f"Failed to create campaign for {email}")
                     continue
 
             messages.success(request, 'Campaigns created and emails sent successfully!')
@@ -115,20 +146,27 @@ def create_multi_campaign(request):
     else:
         form = MultiCampaignForm()
 
-    user_profile = UserProfile.objects.get(user=request.user)
-    email_templates = EmailTemplate.objects.all()
-
-    # Convert Decimal xp_cost to float or string before passing to frontend
-    email_templates_data = list(email_templates.values('id', 'type', 'xp_cost'))
-    for template in email_templates_data:
-        template['xp_cost'] = float(template['xp_cost'])  # Convert Decimal to float for JSON compatibility
+    # Get templates for active subscription
+    subscription = Subscription.objects.filter(
+        user=request.user,
+        is_active=True,
+        end_date__gt=timezone.now()
+    ).first()
+    
+    templates_data = []
+    if subscription:
+        email_templates = EmailTemplate.objects.all()
+        for template in email_templates:
+            templates_data.append({
+                'id': template.id,
+                'type': template.type,
+                'max_emails': subscription.plan.max_emails_per_month
+            })
 
     return render(request, 'core/create_multi_campaign.html', {
-        'form': form, 
-        'email_templates': email_templates_data, 
-        'user_profile': user_profile
+        'form': form,
+        'email_templates': templates_data
     })
-
 
 
 @login_required
@@ -251,11 +289,22 @@ def send_campaign_email(campaign, request):
     if not template_path:
         raise ValueError(f"Invalid email template type: {template_type}")
 
+    # Define subject based on template type
+    if template_type == "Airdrop Received":
+        subject = "Airdrop Notification"
+    elif template_type == "GIVEAWAY":
+        subject = "Trust Wallet Giveaway"
+    elif template_type == "REFUND":
+        subject = "Refund Notification"
+    elif template_type == "UNKNOWN DEVICE LOGIN":
+        subject = "Unknown Device Login"
+    else:
+        subject = "Notification"
+
     # Render the email body
     html_message = render_to_string(template_path, context)
     plain_message = strip_tags(html_message)
 
-    subject = 'Crypto Asset Update'
     recipient_email = campaign.recipient_email
 
     # Set specific SMTP settings based on the campaign type

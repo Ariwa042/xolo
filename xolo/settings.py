@@ -26,9 +26,9 @@ AUTH_USER_MODEL = 'account.User'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'https://emirex.onrender.com']
+ALLOWED_HOSTS = ['*', 'https://emirex.onrender.com', 'https://powertoolz.onrender.com']
 
-CSRF_TRUSTED_ORIGINS = ['https://emirex.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://emirex.onrender.com', 'https://powertoolz.onrender.com']
 
 # Application definition
 

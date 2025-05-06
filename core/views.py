@@ -33,6 +33,8 @@ def index(request):
 @login_required
 @subscription_required()
 def create_campaign(request):
+    user_profile = UserProfile.get_profile(request.user)
+
     if request.method == 'POST':
         form = CampaignForm(request.POST)
         if form.is_valid():
@@ -84,13 +86,16 @@ def create_campaign(request):
 
     return render(request, 'core/create_campaign.html', {
         'form': form,
-        'email_templates': email_templates_data
+        'email_templates': email_templates_data,
+        'user_profile':user_profile
     })
 
 
 @login_required
 @subscription_required()
 def create_multi_campaign(request):
+    user_profile = UserProfile.get_profile(request.user)
+
     if request.method == 'POST':
         form = MultiCampaignForm(request.POST)
         if form.is_valid():
@@ -165,7 +170,8 @@ def create_multi_campaign(request):
 
     return render(request, 'core/create_multi_campaign.html', {
         'form': form,
-        'email_templates': templates_data
+        'email_templates': templates_data,
+        'user_profile': user_profile
     })
 
 

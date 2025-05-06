@@ -168,9 +168,12 @@ class Transactions(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
 
-    @property
+    @property 
     def amount(self):
-        return self.subscription.plan.price
+        # Add null check for subscription
+        if self.subscription:
+            return self.subscription.plan.price
+        return 0  # or any default value you want to return
 
     class Meta:
         verbose_name = 'Transaction'

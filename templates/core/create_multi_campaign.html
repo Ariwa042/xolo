@@ -224,9 +224,7 @@
             <h1>Create Multi Campaign</h1>
             
             <div class="xp-balance">
-                <p><strong>Your XP Balance:</strong> {{ user_profile.xp_balance }} XP</p>
-                <p><strong>Mailing Fee (per email):</strong> <span id="mailingFee">0</span> XP</p>
-                <p><strong>Total Cost:</strong> <span id="totalCost">0</span> XP</p>
+                <p><strong>{% if user_profile.has_active_subscription %}PRO Plan Active{% else %}No Active Plan{% endif %}</p>
             </div>
 
             <form method="post">

@@ -269,13 +269,9 @@
             
             <div class="balance-card">
                 <div class="balance-item">
-                    <span class="balance-label">Your XP Balance</span>
-                    <span class="balance-value" id="xpBalance">{{ user_profile.xp_balance }} XP</span>
+                    <span class="balance-value" id="xpBalance">{% if user_profile.has_active_subscription %}PRO Active{% else %}No Active Plan{% endif %}</span>
                 </div>
-                <div class="balance-item">
-                    <span class="balance-label">Mailing Fee</span>
-                    <span class="balance-value" id="mailingFee">0 XP</span>
-                </div>
+
             </div>
 
             <form method="POST" id="campaignForm">

@@ -56,10 +56,10 @@ class DepositAdmin(admin.ModelAdmin):
     readonly_fields = ('deposit_id', 'get_amount', 'created_at')
     ordering = ('-created_at',)
 
-    def has_receipt(self, obj):
-        return bool(obj.receipt)
-    has_receipt.boolean = True
-    has_receipt.short_description = 'Has Receipt'
+    #def has_receipt(self, obj):
+    #    return bool(obj.receipt)
+    #has_receipt.boolean = True
+    #has_receipt.short_description = 'Has Receipt'
 
     def get_amount(self, obj):
         return obj.amount if obj.subscription_plan else 0

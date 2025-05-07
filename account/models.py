@@ -129,7 +129,7 @@ class SubscriptionPlan(models.Model):
         verbose_name_plural = 'Subscription Plans'
 
     def __str__(self):
-        return f"{self.name} Plan - ₦{self.price}"
+        return f"{self.name} Plan - USDT{self.price}"
 
 
 class Subscription(models.Model):

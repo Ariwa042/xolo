@@ -216,7 +216,7 @@ def notify_admins_of_pending_payment(deposit):
     A new payment is pending approval:
     User: {deposit.user.username}
     Plan: {deposit.subscription_plan}
-    Amount: ₦{deposit.amount}
+    Amount: USDT{deposit.amount}
     """
     
     admin_emails = [admin.email for admin in admins if admin.email]

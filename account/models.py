@@ -119,8 +119,14 @@ class Cryptocurrency(models.Model):
         verbose_name_plural = 'Crypto currencies'
 
 class SubscriptionPlan(models.Model):
+    CURRENCY_CHOICES = [
+        ('USDT', 'USDT'),
+        ('NGN', '₦'),
+    ]
+    
     name = models.CharField(max_length=100, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=4, choices=CURRENCY_CHOICES, default='USDT')
     max_emails_per_month = models.IntegerField(default=100)
     duration_days = models.IntegerField(default=30)
 
@@ -129,7 +135,8 @@ class SubscriptionPlan(models.Model):
         verbose_name_plural = 'Subscription Plans'
 
     def __str__(self):
-        return f"{self.name} Plan - USDT{self.price}"
+        currency_symbol = '₦' if self.currency == 'NGN' else self.currency
+        return f"{self.name} Plan - {self.currency}{self.price}"
 
 
 class Subscription(models.Model):

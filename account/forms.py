@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import User, Deposit, SubscriptionPlan
+from .models import User, Deposit, SubscriptionPlan, Payment_account, Cryptocurrency
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True, error_messages={
@@ -45,23 +45,22 @@ class CustomUserCreationForm(UserCreationForm):
 
 # Form for deposit
 class DepositForm(forms.ModelForm):
-    subscription_plan = forms.ModelChoiceField(
-        queryset=SubscriptionPlan.objects.all(),
-        empty_label=None,
-        label='Select Subscription Plan'
-    )
-
     class Meta:
         model = Deposit
-        fields = ['subscription_plan']
+        fields = ['payment_type', 'payment_account', 'crypto_payment', 'subscription_plan']
+        widgets = {
+            'payment_type': forms.RadioSelect(),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['subscription_plan'].widget.attrs.update({
-            'class': 'form-control',
-            'onchange': 'updateAmount(this.value)'
-        })
-
+        self.fields['payment_account'].required = False
+        self.fields['crypto_payment'].required = False
+        
+        # Add classes for styling
+        self.fields['payment_type'].widget.attrs.update({'class': 'payment-type-radio'})
+        self.fields['subscription_plan'].widget.attrs.update({'class': 'form-control'})
+        self.fields['crypto_payment'].widget.attrs.update({'class': 'form-control'})
 
     def clean_amount(self):
         amount = self.cleaned_data.get('amount')

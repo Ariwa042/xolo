@@ -6,321 +6,108 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subscription Payment - Emirex</title>
     <link rel="stylesheet" href="{% static 'css/deposit.css' %}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <h1>Complete Your Payment</h1>
-        
-        <div class="payment-modal">
-            {% if payment_info %}
-            <div class="modal-content">
-                <div class="bank-details">
-                    <h2><i class="fas fa-university"></i> Bank Account Details</h2>
-                    <div class="detail-row">
-                        <div class="detail-label">Bank Name</div>
-                        <div class="detail-value">{{ payment_info.bank_name }}</div>
-                    </div>
-                    <div class="detail-row">
-                        <div class="detail-label">Account Number</div>
-                        <div class="detail-value">
-                            <span id="accountNumber">{{ payment_info.account_number }}</span>
-                            <button class="copy-btn" onclick="copyToClipboard()">
-                                <i class="far fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="plan-selection">
-                    <h3><i class="fas fa-crown"></i> Select Your Plan</h3>
-                    <form method="post" class="payment-form" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <div class="select-wrapper">
-                            <select name="subscription_plan" required>
-                                <option value="" disabled selected>Choose your plan</option>
-                                {% if form.subscription_plan.field.queryset %}
-                                    {% for plan in form.subscription_plan.field.queryset %}
-                                        <option value="{{ plan.id }}">{{ plan.name }} Plan - ₦{{ plan.price }}</option>
-                                    {% endfor %}
-                                {% endif %}
-                            </select>
-                        </div>
-                        
-                       <!-- <div class="receipt-upload">
-                            <label for="receipt">
-                                <i class="fas fa-file-upload"></i> Upload Payment Receipt
-                                <span class="file-types">(JPG, PNG, PDF)</span>
-                            </label>
-                            <input type="file" 
-                                   id="receipt" 
-                                   name="receipt" 
-                                   accept=".jpg,.jpeg,.png,.pdf"
-                                   required>
-                            <div class="file-name" id="fileName">No file chosen</div>
-                        </div>-->
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="payment_type">Select Payment Method:</label>
+                {{ form.payment_type }}
+            </div>
 
-                        <button type="submit" class="submit-btn">
-                            <i class="fas fa-check-circle"></i> Confirm Payment
-                        </button>
-                    </form>
+            <div id="bank-details" style="display:block;">
+                {% if payment_info %}
+                <h2>Bank Account Details</h2>
+                <p><strong>Bank Name:</strong> {{ payment_info.bank_name }}</p>
+                <p><strong>Account Number:</strong> 
+                    <span id="account-number">{{ payment_info.account_number }}</span>
+                    <button type="button" onclick="copyToClipboard('account-number')"><i class="fa-solid fa-copy"></i>
+                    </button>
+                </p>
+                {% endif %}
+            </div>
+
+            <div id="crypto-details" style="display: none;">
+                <h2>Cryptocurrency Payment</h2>
+                <label for="crypto_payment">Select Cryptocurrency:</label>
+                <select id="crypto-payment-select" name="crypto_payment" class="form-control">
+                    <option value="">Select Cryptocurrency</option>
+                    {% for crypto in crypto_info %}
+                    <option value="{{ crypto.id }}" data-wallet-address="{{ crypto.wallet_address }}" data-qr-code="{{ crypto.qr_code.url }}">
+                        {{ crypto.name }} ({{ crypto.symbol }})
+                    </option>
+                    {% endfor %}
+                </select>
+                <div id="crypto-info" style="display: none; margin-top: 10px;">
+                    <p><strong>Wallet Address:</strong> <span id="wallet-address"></span></p>
+                    <img id="qr-code" src="" alt="QR Code" style="max-width: 200px; display: none;">
                 </div>
             </div>
-            {% endif %}
-        </div>
-    </div>
 
-    <div class="modal-layers">
-        <!-- Processing Layer -->
-        <div class="process-layer" id="processingLayer">
-            <div class="process-content">
-                <div class="loader"></div>
-                <h3>Processing Payment</h3>
-                <p>Please wait while we verify your submission...</p>
+            <div class="form-group">
+                <label for="subscription_plan">Select Subscription Plan:</label>
+                {{ form.subscription_plan }}
             </div>
-        </div>
 
-        <!-- Review Layer -->
-        <div class="review-layer" id="reviewLayer">
-            <div class="review-content">
-                <i class="fas fa-clock review-icon"></i>
-                <h3>Payment Under Review</h3>
-                <p>Your payment has been submitted and is currently under review.</p>
-                <div class="review-details">
-                    <p>Our team will verify your payment shortly.</p>
-                    <p>You will receive a notification once approved.</p>
-                </div>
-                <a href="{% url 'account:transactions' %}" class="review-btn">View Transaction History</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="notification" id="notification">
-        <i class="fas fa-check"></i> Account number copied!
+            <button type="submit" class="btn btn-primary">Submit Payment</button>
+        </form>
     </div>
 
     <script>
-        // Fixed copyText function to use correct IDs
-        function copyText() {
-            const accountNumber = document.getElementById('accountNumber').innerText;
-            const notification = document.getElementById('notification');
-            
-            // Create temporary input and copy
-            const tempInput = document.createElement('input');
-            tempInput.value = accountNumber;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-            
-            // Show notification
-            notification.classList.add('show');
-            
-            // Change button icon temporarily
-            const button = document.querySelector('.copy-btn');
-            const originalIcon = button.innerHTML;
-            button.innerHTML = '<i class="fas fa-check"></i>';
-            
-            // Reset after 2 seconds
-            setTimeout(() => {
-                notification.classList.remove('show');
-                button.innerHTML = originalIcon;
-            }, 2000);
+        document.addEventListener('DOMContentLoaded', function () {
+            const paymentTypeInputs = document.querySelectorAll('input[name="payment_type"]');
+            const bankDetails = document.getElementById('bank-details');
+            const cryptoDetails = document.getElementById('crypto-details');
+            const cryptoSelect = document.getElementById('crypto-payment-select');
+            const cryptoInfo = document.getElementById('crypto-info');
+            const walletAddress = document.getElementById('wallet-address');
+            const qrCode = document.getElementById('qr-code');
+
+            // Toggle payment sections based on payment type
+            paymentTypeInputs.forEach(input => {
+                input.addEventListener('change', function () {
+                    if (this.value === 'BANK') {
+                        bankDetails.style.display = 'block';
+                        cryptoDetails.style.display = 'none';
+                    } else if (this.value === 'CRYPTO') {
+                        bankDetails.style.display = 'none';
+                        cryptoDetails.style.display = 'block';
+                    } else {
+                        bankDetails.style.display = 'none';
+                        cryptoDetails.style.display = 'none';
+                    }
+                });
+            });
+
+            // Update cryptocurrency details on selection
+            cryptoSelect.addEventListener('change', function () {
+                const selectedOption = this.options[this.selectedIndex];
+                const wallet = selectedOption.getAttribute('data-wallet-address');
+                const qrCodeUrl = selectedOption.getAttribute('data-qr-code');
+
+                if (wallet && qrCodeUrl) {
+                    walletAddress.textContent = wallet;
+                    qrCode.src = qrCodeUrl;
+                    qrCode.style.display = 'block';
+                    cryptoInfo.style.display = 'block';
+                } else {
+                    walletAddress.textContent = '';
+                    qrCode.src = '';
+                    qrCode.style.display = 'none';
+                    cryptoInfo.style.display = 'none';
+                }
+            });
+        });
+
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard!');
+            });
         }
-
-        // Fix form validation
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const select = this.querySelector('select[name="subscription_plan"]');
-            if (!select.value) {
-                e.preventDefault();
-                alert('Please select a subscription plan');
-                return;
-            }
-            
-            handlePaymentSubmission();
-            setTimeout(() => {
-                this.submit();
-            }, 4000);
-        });
-
-        // Remove duplicate event listeners and obsolete functions
-        document.addEventListener('DOMContentLoaded', function() {
-            const select = document.querySelector('select[name="subscription_plan"]');
-            if (select) {
-                select.style.color = '#fff';
-                select.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-                select.style.padding = '1rem 3rem 1rem 1rem';
-                select.style.width = '100%';
-                select.style.border = '1px solid rgba(255, 255, 255, 0.1)';
-                select.style.borderRadius = '8px';
-            }
-        });
-
-        function showNotification() {
-            const notification = document.getElementById('notification');
-            notification.classList.add('show');
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 2000);
-        }
-
-        function handlePaymentSubmission() {
-            const processingLayer = document.getElementById('processingLayer');
-            const reviewLayer = document.getElementById('reviewLayer');
-            
-            processingLayer.classList.add('show');
-            
-            // Simulate processing time (3 seconds)
-            setTimeout(() => {
-                processingLayer.classList.remove('show');
-                reviewLayer.classList.add('show');
-            }, 3000);
-            
-            return false; // Prevent form from submitting immediately
-        }
-
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            handlePaymentSubmission();
-            setTimeout(() => {
-                this.submit();
-            }, 4000);
-        });
-
-        function copyToClipboard() {
-            const accountNumber = document.getElementById('accountNumber').innerText;
-            
-            // Create temporary input element
-            const tempInput = document.createElement('input');
-            tempInput.value = accountNumber;
-            document.body.appendChild(tempInput);
-            
-            // Select and copy
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-
-            // Show success feedback
-            const copyBtn = document.querySelector('.copy-btn');
-            copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-            
-            // Show notification
-            const notification = document.getElementById('notification');
-            notification.classList.add('show');
-            
-            // Reset after 2 seconds
-            setTimeout(() => {
-                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                notification.classList.remove('show');
-            }, 2000);
-        }
-
-        // Make sure form is working
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const select = this.querySelector('select');
-            if (!select.value) {
-                e.preventDefault();
-                alert('Please select a subscription plan');
-            }
-        });
-
-        document.getElementById('receipt').addEventListener('change', function(e) {
-            const fileName = e.target.files[0]?.name || 'No file chosen';
-            document.getElementById('fileName').textContent = fileName;
-        });
     </script>
-
-    <style>
-        .select-wrapper {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .select-wrapper select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
-            border-radius: 8px;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .copy-section .detail-value {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .copy-section input {
-            background: transparent;
-            border: none;
-            color: white;
-            font-family: monospace;
-            font-size: 1.1rem;
-            width: auto;
-            padding: 0;
-        }
-
-        .copy-section input:focus {
-            outline: none;
-        }
-
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #4CAF50;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 4px;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        .notification.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-
-        .receipt-upload {
-            margin: 20px 0;
-            text-align: center;
-        }
-
-        .receipt-upload label {
-            display: inline-block;
-            padding: 12px 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .receipt-upload label:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .receipt-upload input[type="file"] {
-            display: none;
-        }
-
-        .file-types {
-            font-size: 0.8em;
-            opacity: 0.7;
-            margin-left: 8px;
-        }
-
-        .file-name {
-            margin-top: 8px;
-            font-size: 0.9em;
-            color: rgba(255, 255, 255, 0.7);
-        }
-    </style>
 </body>
 </html>

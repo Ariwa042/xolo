@@ -7,3 +7,5 @@ mnemonic
 gunicorn
 shortuuid
 whitenoise
+qrcode
+pillow

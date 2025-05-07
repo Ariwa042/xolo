@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="crypto-payment-container">
+  <h1 class="page-title">Secure Crypto Payment</h1>
+
+  <div class="payment-card">
+    <form method="post" id="paymentForm" class="form-payment">
+      {% csrf_token %}
+      <input type="hidden" name="subscription_plan" value="{{ request.session.selected_plan_id }}">
+
+      <!-- Select Cryptocurrency -->
+      <div class="form-group">
+        <label for="cryptoSelect"><i class="fas fa-coins"></i> Cryptocurrency</label>
+        <div class="select-wrapper">
+          <select id="cryptoSelect" name="crypto_payment" required>
+            <option value="" disabled selected>Select Coin</option>
+            {% for crypto in crypto_info %}
+              <option value="{{ crypto.id }}">{{ crypto.name }} ({{ crypto.symbol }})</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <!-- Display Selected Plan -->
+      <div class="form-group">
+        <label><i class="fas fa-crown"></i> Selected Plan</label>
+        <div class="plan-display">
+          {{ selected_plan.name }} – ₦{{ selected_plan.price }}
+        </div>
+      </div>
+
+      <!-- Crypto Details Section -->
+      <div id="cryptoDetails" class="crypto-details" style="display: none;">
+        <h3 id="cryptoName"></h3>
+        <div class="qr-container">
+          <img id="qrCode" alt="QR Code" class="qr-code">
+        </div>
+        <div class="wallet-details">
+          <div class="detail-row">
+            <div class="detail-label">Wallet Address</div>
+            <div class="detail-value">
+              <span id="walletAddress"></span>
+              <button type="button" class="copy-btn" onclick="copyToClipboard('walletAddress')">
+                <i class="far fa-copy"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Indicator -->
+      <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+        <p>Loading details...</p>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-group">
+        <button type="submit" class="btn-submit">Confirm & Pay</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="notification" id="notification">
+  <i class="fas fa-check"></i> Address copied!
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const cryptoSelect = document.getElementById('cryptoSelect');
+  const cryptoDetails = document.getElementById('cryptoDetails');
+  const cryptoName = document.getElementById('cryptoName');
+  const walletAddress = document.getElementById('walletAddress');
+  const qrCode = document.getElementById('qrCode');
+  const loadingIndicator = document.getElementById('loadingIndicator');
+
+  cryptoSelect.addEventListener('change', function() {
+    const cryptoId = this.value;
+    if (!cryptoId) {
+      cryptoDetails.style.display = 'none';
+      return;
+    }
+
+    // Show loading indicator
+    loadingIndicator.style.display = 'block';
+    cryptoDetails.style.display = 'none';
+
+    fetch(`/account/get_crypto_details/${cryptoId}/`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch crypto details');
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          cryptoName.textContent = `${data.data.name} (${data.data.symbol})`;
+          walletAddress.textContent = data.data.wallet_address;
+          qrCode.src = `data:image/png;base64,${data.data.qr_code}`;
+          cryptoDetails.style.display = 'block';
+        } else {
+          throw new Error(data.error || 'Invalid data received');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while fetching crypto details. Please try again.');
+      })
+      .finally(() => {
+        // Hide loading indicator
+        loadingIndicator.style.display = 'none';
+      });
+  });
+});
+
+function copyToClipboard(elementId) {
+  const text = document.getElementById(elementId).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const notification = document.getElementById('notification');
+    notification.classList.add('show');
+    setTimeout(() => notification.classList.remove('show'), 2000);
+  }).catch(error => {
+    console.error('Error copying text:', error);
+    alert('Failed to copy text. Please try again.');
+  });
+}
+</script>
+{% endblock %}

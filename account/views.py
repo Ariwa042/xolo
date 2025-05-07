@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import CustomUserCreationForm, DepositForm, EmailAuthenticationForm
-from .models import UserProfile, Deposit, Transactions, Payment_account, SubscriptionPlan, Subscription
+from .models import UserProfile, Deposit, Transactions, Payment_account, SubscriptionPlan, Subscription, Cryptocurrency
 from django.db.models import Sum
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -128,18 +128,21 @@ def subscribe_to_plan(request, plan_id):
 @login_required 
 def deposit(request):
     payment_info = Payment_account.objects.first()
+    crypto_info = Cryptocurrency.objects.all()
+
+    # Ensure QR codes are generated for all cryptocurrencies
+    for crypto in crypto_info:
+        if not crypto.qr_code:
+            crypto.save()
 
     if request.method == 'POST':
         form = DepositForm(request.POST, request.FILES)
         if form.is_valid():
             deposit = form.save(commit=False)
             deposit.user = request.user
-            deposit.payment_account = payment_info
+            deposit.payment_account = payment_info if deposit.payment_type == 'BANK' else None
+            deposit.crypto_payment = form.cleaned_data.get('crypto_payment') if deposit.payment_type == 'CRYPTO' else None
             deposit.status = 'PENDING'
-            
-            # Handle receipt file
-            #if 'receipt' in request.FILES:
-             #   deposit.receipt = request.FILES['receipt']
             
             deposit.save()
             
@@ -155,6 +158,7 @@ def deposit(request):
     return render(request, 'account/deposit.html', {
         'form': form,
         'payment_info': payment_info,
+        'crypto_info': crypto_info,
     })
 
 # Subscription list view

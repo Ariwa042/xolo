@@ -1,8 +1,10 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from .models import (
     User, UserProfile, Transactions, Payment_account,
-    SubscriptionPlan, Subscription, Deposit
+    SubscriptionPlan, Subscription, Deposit, Cryptocurrency
 )
+from .utils import generate_qr_code
 
 
 @admin.register(User)
@@ -72,3 +74,16 @@ class TransactionsAdmin(admin.ModelAdmin):
     search_fields = ('user__username',)
     readonly_fields = ('amount', 'created_at')
     ordering = ('-created_at',)
+
+
+@admin.register(Cryptocurrency)
+class CryptocCurrencyAdmin(admin.ModelAdmin):
+    list_display = ('name', 'symbol', 'wallet_address')
+    list_filter = ('name', 'symbol')
+    search_fields = ('name', 'symbol', 'wallet_address')
+    
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'symbol', 'wallet_address')
+        }),
+    )

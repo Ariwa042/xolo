@@ -14,4 +14,5 @@ urlpatterns = [
   path('deposit/', views.deposit, name='deposit'),
   path('transactions/', views.transaction_history, name='transactions'),
   path('change-password/', views.change_password, name='change_password'),
+  #path('crypto-payment/', views.crypto_payment, name='crypto_payment'),
 ]

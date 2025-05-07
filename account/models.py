@@ -6,10 +6,20 @@ from shortuuid.django_fields import ShortUUIDField
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from django.core.validators import FileExtensionValidator
+import qrcode
+from io import BytesIO
+from django.core.files import File
+from PIL import Image
+from .utils import generate_qr_code 
 STATUS_CHOICES = [
     ('PENDING', 'Pending'),
     ('COMPLETED', 'Completed'),
     ('FAILED', 'Failed'),
+]
+
+PAYMENT_TYPE = [
+    ('BANK', 'Bank Transfer'),
+    ('CRYPTO', 'Cryptocurrency'),
 ]
 
 class User(AbstractUser):
@@ -85,6 +95,28 @@ class Payment_account(models.Model):
         verbose_name = 'Payment Account'
         verbose_name_plural = 'Payment Accounts'
 
+class Cryptocurrency(models.Model):
+    name = models.CharField(max_length=100, null=True, blank=True)
+    wallet_address = models.CharField(max_length=255, null=True, blank=True)
+    symbol = models.CharField(max_length=10, null=True, blank=True)
+    qr_code = models.ImageField(upload_to='qr_codes/', null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.wallet_address and not self.qr_code:
+            qr_code = generate_qr_code(self.wallet_address)
+            if qr_code:
+                from django.core.files.base import ContentFile
+                import base64
+                image_data = base64.b64decode(qr_code)
+                self.qr_code.save(f"{self.name}_qr.png", ContentFile(image_data), save=False)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.name} ({self.symbol})'
+    
+    class Meta:
+        verbose_name = 'Crypto currency'
+        verbose_name_plural = 'Crypto currencies'
 
 class SubscriptionPlan(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
@@ -139,11 +171,19 @@ class Subscription(models.Model):
 class Deposit(models.Model):
     deposit_id = ShortUUIDField(unique=True, max_length=8, length=5, prefix='dp', alphabet='0123456789')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    payment_type = models.CharField(max_length=10, choices=PAYMENT_TYPE, default='BANK')
     payment_account = models.ForeignKey(Payment_account, on_delete=models.CASCADE, null=True, blank=True)
+    crypto_payment = models.ForeignKey(Cryptocurrency, on_delete=models.CASCADE, null=True, blank=True)
     subscription_plan = models.ForeignKey(SubscriptionPlan, on_delete=models.CASCADE, null=True, blank=True)
-   # receipt = models.ImageField(upload_to='deposits/', null=True, blank=True, validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'pdf'])], help_text="Upload payment receipt")
     created_at = models.DateTimeField(default=timezone.now)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.payment_type == 'BANK' and not self.payment_account:
+            raise ValidationError('Bank payment requires a payment account')
+        if self.payment_type == 'CRYPTO' and not self.crypto_payment:
+            raise ValidationError('Crypto payment requires a cryptocurrency selection')
 
     @property
     def amount(self):
@@ -153,6 +193,17 @@ class Deposit(models.Model):
     def has_proof(self):
         return bool(self.receipt)
 
+    @property
+    def crypto_wallet_address(self):
+        if self.payment_type == 'CRYPTO' and self.crypto_payment:
+            return self.crypto_payment.wallet_address
+        return None
+
+    @property
+    def crypto_qr_code(self):
+        if self.payment_type == 'CRYPTO' and self.crypto_payment:
+            return self.crypto_payment.qr_code.url if self.crypto_payment.qr_code else None
+        return None
 
     class Meta:
         verbose_name = 'Deposit'

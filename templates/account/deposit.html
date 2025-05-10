@@ -6,25 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subscription Payment - Emirex</title>
     <link rel="stylesheet" href="{% static 'css/deposit.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <h1>Complete Your Payment</h1>
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" id="depositForm">
             {% csrf_token %}
             <div class="form-group">
                 <label for="payment_type">Select Payment Method:</label>
                 {{ form.payment_type }}
             </div>
 
-            <div id="bank-details" style="display:block;">
+            <div id="bank-details" style="display:none;">
                 {% if payment_info %}
                 <h2>Bank Account Details</h2>
                 <p><strong>Bank Name:</strong> {{ payment_info.bank_name }}</p>
                 <p><strong>Account Number:</strong> 
                     <span id="account-number">{{ payment_info.account_number }}</span>
-                    <button type="button" onclick="copyToClipboard('account-number')"><i class="fa-solid fa-copy"></i>
+                    <button type="button" class="copy-btn" onclick="copyToClipboard('account-number')">
+                        <i class="fas fa-copy"></i> Copy
                     </button>
                 </p>
                 {% endif %}
@@ -36,14 +37,20 @@
                 <select id="crypto-payment-select" name="crypto_payment" class="form-control">
                     <option value="">Select Cryptocurrency</option>
                     {% for crypto in crypto_info %}
-                    <option value="{{ crypto.id }}" data-wallet-address="{{ crypto.wallet_address }}" data-qr-code="{{ crypto.qr_code.url }}">
+                    <option value="{{ crypto.id }}" 
+                            data-wallet-address="{{ crypto.wallet_address }}"
+                            data-name="{{ crypto.name }}"
+                            data-symbol="{{ crypto.symbol }}">
                         {{ crypto.name }} ({{ crypto.symbol }})
                     </option>
                     {% endfor %}
                 </select>
                 <div id="crypto-info" style="display: none; margin-top: 10px;">
                     <p><strong>Wallet Address:</strong> <span id="wallet-address"></span></p>
-                    <img id="qr-code" src="" alt="QR Code" style="max-width: 200px; display: none;">
+                    <div id="qr-container" class="text-center">
+                        <img id="qr-code" src="" alt="QR Code" style="max-width: 200px;">
+                        <p id="crypto-name"></p>
+                    </div>
                 </div>
             </div>
 
@@ -56,50 +63,100 @@
         </form>
     </div>
 
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="modal">
+        <div class="modal-content">
+            <div class="loader"></div>
+            <p>Your payment is under review and will be verified as soon as possible...</p>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const paymentTypeInputs = document.querySelectorAll('input[name="payment_type"]');
+            const paymentTypeInputs = document.getElementsByName('payment_type');
             const bankDetails = document.getElementById('bank-details');
             const cryptoDetails = document.getElementById('crypto-details');
             const cryptoSelect = document.getElementById('crypto-payment-select');
             const cryptoInfo = document.getElementById('crypto-info');
             const walletAddress = document.getElementById('wallet-address');
             const qrCode = document.getElementById('qr-code');
+            const cryptoName = document.getElementById('crypto-name');
+            const depositForm = document.getElementById('depositForm');
 
-            // Toggle payment sections based on payment type
+            // Payment type toggle
             paymentTypeInputs.forEach(input => {
-                input.addEventListener('change', function () {
-                    if (this.value === 'BANK') {
-                        bankDetails.style.display = 'block';
-                        cryptoDetails.style.display = 'none';
-                    } else if (this.value === 'CRYPTO') {
-                        bankDetails.style.display = 'none';
-                        cryptoDetails.style.display = 'block';
-                    } else {
-                        bankDetails.style.display = 'none';
-                        cryptoDetails.style.display = 'none';
-                    }
+                input.addEventListener('change', function() {
+                    bankDetails.style.display = this.value === 'BANK' ? 'block' : 'none';
+                    cryptoDetails.style.display = this.value === 'CRYPTO' ? 'block' : 'none';
                 });
             });
 
-            // Update cryptocurrency details on selection
-            cryptoSelect.addEventListener('change', function () {
+            // Cryptocurrency selection handler
+            cryptoSelect.addEventListener('change', function() {
                 const selectedOption = this.options[this.selectedIndex];
                 const wallet = selectedOption.getAttribute('data-wallet-address');
-                const qrCodeUrl = selectedOption.getAttribute('data-qr-code');
+                const name = selectedOption.getAttribute('data-name');
+                const symbol = selectedOption.getAttribute('data-symbol');
 
-                if (wallet && qrCodeUrl) {
+                if (wallet) {
                     walletAddress.textContent = wallet;
-                    qrCode.src = qrCodeUrl;
-                    qrCode.style.display = 'block';
+                    qrCode.src = `https://quickchart.io/qr?text=${encodeURIComponent(wallet)}&size=200`;
+                    cryptoName.textContent = `${name} (${symbol})`;
                     cryptoInfo.style.display = 'block';
                 } else {
-                    walletAddress.textContent = '';
-                    qrCode.src = '';
-                    qrCode.style.display = 'none';
                     cryptoInfo.style.display = 'none';
                 }
             });
+
+            // Form submission handler
+            depositForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const modal = document.getElementById('loadingModal');
+                
+                // Set payment_account for bank transfer
+                if (formData.get('payment_type') === 'BANK') {
+                    formData.set('payment_account', '{{ payment_info.id }}');
+                }
+
+                modal.classList.add('show');
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    setTimeout(() => {
+                        window.location.href = data.redirect_url || '/account/profile/';
+                    }, 3000);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    modal.classList.remove('show');
+                    messages.error(request, 'An error occurred while processing your payment.');
+                });
+            });
+
+            // Initial payment type setup
+            const initialPaymentType = document.querySelector('input[name="payment_type"]:checked');
+            if (initialPaymentType) {
+                if (initialPaymentType.value === 'BANK') {
+                    document.getElementById('bank-details').style.display = 'block';
+                    document.getElementById('crypto-details').style.display = 'none';
+                } else if (initialPaymentType.value === 'CRYPTO') {
+                    document.getElementById('bank-details').style.display = 'none';
+                    document.getElementById('crypto-details').style.display = 'block';
+                }
+            }
         });
 
         function copyToClipboard(elementId) {

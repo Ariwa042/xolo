@@ -12,6 +12,8 @@ import logging
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.http import JsonResponse
+from django.urls import reverse
 
 logger = logging.getLogger(__name__)
 
@@ -130,28 +132,37 @@ def deposit(request):
     payment_info = Payment_account.objects.first()
     crypto_info = Cryptocurrency.objects.all()
 
-    # Ensure QR codes are generated for all cryptocurrencies
-    for crypto in crypto_info:
-        if not crypto.qr_code:
-            crypto.save()
-
     if request.method == 'POST':
         form = DepositForm(request.POST, request.FILES)
         if form.is_valid():
             deposit = form.save(commit=False)
             deposit.user = request.user
-            deposit.payment_account = payment_info if deposit.payment_type == 'BANK' else None
-            deposit.crypto_payment = form.cleaned_data.get('crypto_payment') if deposit.payment_type == 'CRYPTO' else None
-            deposit.status = 'PENDING'
             
+            # Explicitly set payment_account for bank transfers
+            if deposit.payment_type == 'BANK':
+                deposit.payment_account = payment_info
+                deposit.crypto_payment = None
+            else:
+                deposit.payment_account = None
+                deposit.crypto_payment = form.cleaned_data.get('crypto_payment')
+            
+            deposit.status = 'PENDING'
             deposit.save()
             
             # Send admin notification
             notify_admins_of_pending_payment(deposit)
-            messages.success(request, 'Payment submitted and under review.')
-            return redirect('account:profile')
+            
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Payment submitted successfully',
+                'redirect_url': reverse('account:profile')
+            })
         else:
-            messages.error(request, 'Please correct the errors below.')
+            return JsonResponse({
+                'status': 'error',
+                'errors': form.errors
+            }, status=400)
+
     else:
         form = DepositForm()
 

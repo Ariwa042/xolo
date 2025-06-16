@@ -173,14 +173,14 @@ CAMPAIGN_EMAIL_BACKENDS = {
         'EMAIL_HOST': 'smtp.gmail.com',
         'EMAIL_PORT': 587,
         'EMAIL_HOST_USER': 'TrustWallet decentralizedxchange@gmail.com',
-        'EMAIL_HOST_PASSWORD': 'dyuc bpbt zwqg jefe',
+        'EMAIL_HOST_PASSWORD': 'qguy isqs vfcw ylqx',
         'EMAIL_USE_TLS': True,
     },
     'REFUND': {
         'EMAIL_HOST': 'smtp.gmail.com',
         'EMAIL_PORT': 587,
         'EMAIL_HOST_USER': 'TrustWallet decentralizedxchange@gmail.com', # Replace with your Gmail address
-        'EMAIL_HOST_PASSWORD': 'dyuc bpbt zwqg jefe',
+        'EMAIL_HOST_PASSWORD': 'qguy isqs vfcw ylqx',
         'EMAIL_USE_TLS': True,
         'EMAIL_TIMEOUT': 60,
     },
@@ -188,7 +188,7 @@ CAMPAIGN_EMAIL_BACKENDS = {
         'EMAIL_HOST': 'smtp.gmail.com',
         'EMAIL_PORT': 465,
         'EMAIL_HOST_USER': 'TrustWallet decentralizedxchange@gmail.com',
-        'EMAIL_HOST_PASSWORD': 'dyuc bpbt zwqg jefe',
+        'EMAIL_HOST_PASSWORD': 'qguy isqs vfcw ylqx',
         'EMAIL_USE_SSL': True,
     },
 

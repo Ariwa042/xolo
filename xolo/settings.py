@@ -187,7 +187,7 @@ CAMPAIGN_EMAIL_BACKENDS = {
     'UNKNOWN DEVICE LOGIN': {
         'EMAIL_HOST': 'smtp.gmail.com',
         'EMAIL_PORT': 587,
-        'EMAIL_HOST_USER': 'TrustWallet decentralizedxchange@gmail.com',
+        'EMAIL_HOST_USER': 'decentralizedxchange@gmail.com',
         'EMAIL_HOST_PASSWORD': 'qguy isqs vfcw ylqx',
         'EMAIL_USE_TLS': True,
         'EMAIL_USE_SSL': False,

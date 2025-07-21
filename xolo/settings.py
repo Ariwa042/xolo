@@ -151,9 +151,9 @@ EMAIL_HOST = 'smtp.hostinger.com'
 EMAIL_PORT = 465
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-EMAIL_HOST_USER = 'cointracker.llc@gmail.com'
-EMAIL_HOST_PASSWORD = 'lmpp zwmt ogxd wjik'
-DEFAULT_FROM_EMAIL = 'Emirex Tools <cointracker.llc@gmail.com>'
+EMAIL_HOST_USER = 'csupport@coindistribution.site'
+EMAIL_HOST_PASSWORD = 'Arinze123.'
+DEFAULT_FROM_EMAIL = 'Emirex Tools <support@coindistribution.site>'
 EMAIL_TIMEOUT = 60
 
 CAMPAIGN_EMAIL_BACKENDS = {

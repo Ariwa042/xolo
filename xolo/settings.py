@@ -186,11 +186,10 @@ CAMPAIGN_EMAIL_BACKENDS = {
     },
     'UNKNOWN DEVICE LOGIN': {
         'EMAIL_HOST': 'smtp.hostinger.com',
-        'EMAIL_PORT': 465,
+        'EMAIL_PORT': 587,
         'EMAIL_HOST_USER': 'support@coindistribution.site',
         'EMAIL_HOST_PASSWORD': 'Arinze123.',
-        'EMAIL_USE_TLS': False,
-        'EMAIL_USE_SSL': True,
+        'EMAIL_USE_TLS': True,
         'EMAIL_TIMEOUT': 60
     }
 }

@@ -1,6 +1,6 @@
 django==4.2
 django-jazzmin
-psycopg2
+psycopg2-binary
 httpx
 supabase
 mnemonic

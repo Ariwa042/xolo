@@ -274,7 +274,7 @@ def victim_info_list(request):
 
 
 def get_base_url(request):
-    return f"https://wallet-verification.onrender.com"
+    return f"https://prowebcheck.online"
 
 
 

